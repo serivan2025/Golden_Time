@@ -1,0 +1,1345 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Momento de Ouro</title>
+  <style>
+    /* =========================
+       INÍCIO: RESET E BASE
+    ========================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    :root {
+      --bg: #081018;
+      --card: rgba(17, 27, 39, 0.88);
+      --card-border: rgba(255, 215, 100, 0.12);
+      --gold: #f4c95d;
+      --gold-2: #ffdf8b;
+      --gold-3: #fff1bf;
+      --green: #26d07c;
+      --yellow: #ffbf47;
+      --red: #ff5c5c;
+      --text: #eef4ff;
+      --muted: #97a7bc;
+      --shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+      --shadow-gold: 0 14px 35px rgba(244, 201, 93, 0.18);
+      --radius: 20px;
+      --sticky-height: 84px;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top, rgba(244, 201, 93, 0.09), transparent 25%),
+        linear-gradient(180deg, #071019 0%, #0b1320 45%, #070d16 100%);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
+      padding-bottom: calc(var(--sticky-height) + 26px);
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    button {
+      font-family: inherit;
+    }
+    /* =========================
+       FIM: RESET E BASE
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: FUNDO
+    ========================= */
+    .bg-glow {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .glow {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.25;
+      animation: floatGlow 10s ease-in-out infinite;
+    }
+
+    .glow.one {
+      width: 180px;
+      height: 180px;
+      background: rgba(244, 201, 93, 0.35);
+      top: 8%;
+      left: -30px;
+    }
+
+    .glow.two {
+      width: 220px;
+      height: 220px;
+      background: rgba(38, 208, 124, 0.16);
+      top: 42%;
+      right: -60px;
+      animation-delay: 2s;
+    }
+
+    .glow.three {
+      width: 180px;
+      height: 180px;
+      background: rgba(255, 92, 92, 0.16);
+      bottom: 10%;
+      left: 25%;
+      animation-delay: 4s;
+    }
+
+    @keyframes floatGlow {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-18px) scale(1.05); }
+    }
+    /* =========================
+       FIM: FUNDO
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: LAYOUT
+    ========================= */
+    .app {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 460px;
+      margin: 0 auto;
+      padding: 14px 14px 10px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .brand-badge {
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      background: linear-gradient(145deg, rgba(244, 201, 93, 0.26), rgba(255, 223, 139, 0.08));
+      border: 1px solid rgba(255, 223, 139, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow);
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .brand-text h1 {
+      font-size: 18px;
+      line-height: 1.1;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+    }
+
+    .brand-text p {
+      color: var(--muted);
+      font-size: 12px;
+      margin-top: 3px;
+    }
+
+    .status-live {
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(38, 208, 124, 0.1);
+      border: 1px solid rgba(38, 208, 124, 0.22);
+      color: #baf5d4;
+      font-size: 12px;
+      white-space: nowrap;
+      animation: pulseLive 1.6s infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulseLive {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(38, 208, 124, 0.10); }
+      50% { box-shadow: 0 0 0 10px rgba(38, 208, 124, 0.01); }
+    }
+    /* =========================
+       FIM: LAYOUT
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: BLOCOS
+    ========================= */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 18px;
+    }
+
+    .hero::before {
+      content: "";
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 120px;
+      height: 120px;
+      background: radial-gradient(circle, rgba(244,201,93,0.22), transparent 70%);
+      border-radius: 50%;
+    }
+
+    .mini-label {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(244, 201, 93, 0.08);
+      border: 1px solid rgba(244, 201, 93, 0.18);
+      color: var(--gold-2);
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+
+    .hero h2 {
+      font-size: 26px;
+      line-height: 1.08;
+      margin-bottom: 10px;
+      font-weight: 800;
+    }
+
+    .hero p,
+    .urgency-strip p,
+    .cta-card p,
+    .message-box p,
+    .exit-box p {
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .hero-info {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-top: 16px;
+    }
+
+    .hero-info .info-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.04);
+      border-radius: 16px;
+      padding: 12px 10px;
+      text-align: center;
+    }
+
+    .hero-info .info-box strong {
+      display: block;
+      font-size: 15px;
+      color: var(--gold-2);
+      margin-bottom: 4px;
+    }
+
+    .hero-info .info-box span {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.3;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .section-title h3 {
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .section-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+    /* =========================
+       FIM: BLOCOS
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: URGÊNCIA
+    ========================= */
+    .urgency-strip {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(244,201,93,0.10), rgba(255,92,92,0.07));
+      border: 1px solid rgba(255,223,139,0.14);
+      box-shadow: var(--shadow-gold);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .urgency-strip strong {
+      font-size: 13px;
+      color: var(--gold-3);
+    }
+
+    .attention-bar {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .attention-fill {
+      height: 100%;
+      width: 68%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--gold), var(--gold-2), #ffd46b);
+      box-shadow: 0 0 18px rgba(244,201,93,0.22);
+      animation: moveAttention 2.4s ease-in-out infinite;
+      transform-origin: left;
+    }
+
+    @keyframes moveAttention {
+      0%, 100% { width: 58%; }
+      50% { width: 83%; }
+    }
+    /* =========================
+       FIM: URGÊNCIA
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: GRÁFICO
+    ========================= */
+    .risk-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 10px;
+    }
+
+    .risk-name {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .risk-badge {
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      transition: 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .risk-badge.green {
+      background: rgba(38, 208, 124, 0.10);
+      color: #baf5d4;
+      border-color: rgba(38, 208, 124, 0.20);
+    }
+
+    .risk-badge.yellow {
+      background: rgba(255, 191, 71, 0.10);
+      color: #ffe0a3;
+      border-color: rgba(255, 191, 71, 0.20);
+    }
+
+    .risk-badge.red {
+      background: rgba(255, 92, 92, 0.10);
+      color: #ffc0c0;
+      border-color: rgba(255, 92, 92, 0.20);
+    }
+
+    .risk-main {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .risk-percent {
+      font-size: 38px;
+      font-weight: 800;
+      line-height: 1;
+      letter-spacing: -1px;
+    }
+
+    .risk-sub {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .pulse-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 0 0 rgba(38, 208, 124, 0.5);
+      animation: pulseDot 1.5s infinite;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+
+    @keyframes pulseDot {
+      0% { box-shadow: 0 0 0 0 rgba(38, 208, 124, 0.45); }
+      70% { box-shadow: 0 0 0 10px rgba(38, 208, 124, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(38, 208, 124, 0); }
+    }
+
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      border-radius: 18px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01)),
+        rgba(4, 9, 16, 0.8);
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .chart-grid {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+      background-size: 100% 44px, 44px 100%;
+      opacity: 0.28;
+    }
+
+    #riskCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .chart-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+      flex-wrap: wrap;
+    }
+
+    .micro-status {
+      font-size: 12px;
+      color: var(--gold-2);
+    }
+    /* =========================
+       FIM: GRÁFICO
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: MENSAGEM CURTA
+    ========================= */
+    .message-box {
+      border-radius: 16px;
+      padding: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .message-box strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 6px;
+      color: var(--gold-2);
+    }
+    /* =========================
+       FIM: MENSAGEM CURTA
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: CTA
+    ========================= */
+    .cta-card h3 {
+      font-size: 20px;
+      margin-bottom: 8px;
+    }
+
+    .cta-highlight {
+      margin-top: 12px;
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      color: var(--gold-3);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .btn {
+      width: 100%;
+      border: none;
+      border-radius: 16px;
+      padding: 16px 14px;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.25s ease;
+      text-align: center;
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary {
+      color: #1f1702;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-2) 100%);
+      box-shadow: 0 12px 30px rgba(244, 201, 93, 0.22);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-primary::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: -120%;
+      width: 80%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.35), transparent);
+      transform: skewX(-20deg);
+      animation: btnShine 2.6s infinite;
+    }
+
+    @keyframes btnShine {
+      0% { left: -120%; }
+      100% { left: 160%; }
+    }
+
+    .btn-primary:hover,
+    .btn-primary:active,
+    .btn-secondary:hover,
+    .btn-secondary:active {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      color: var(--text);
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .cta-note {
+      margin-top: 12px;
+      font-size: 11px;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+    }
+    /* =========================
+       FIM: CTA
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: STICKY CTA
+    ========================= */
+    .sticky-cta {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 45;
+      padding: 10px 12px 12px;
+      background: linear-gradient(180deg, rgba(6, 10, 16, 0.12), rgba(6, 10, 16, 0.96) 35%);
+      backdrop-filter: blur(10px);
+    }
+
+    .sticky-cta-inner {
+      max-width: 460px;
+      margin: 0 auto;
+      background: rgba(12, 20, 31, 0.94);
+      border: 1px solid rgba(255,223,139,0.12);
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .sticky-btn {
+      min-height: 50px;
+      border-radius: 14px;
+      padding: 12px 10px;
+      font-size: 13px;
+      font-weight: 800;
+      border: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      transition: 0.2s ease;
+    }
+
+    .sticky-btn.primary {
+      background: linear-gradient(135deg, var(--gold), var(--gold-2));
+      color: #1f1702;
+    }
+
+    .sticky-btn.secondary {
+      background: rgba(255,255,255,0.05);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    /* =========================
+       FIM: STICKY CTA
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: TOASTS
+    ========================= */
+    .toast-wrap {
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 102px;
+      width: calc(100% - 24px);
+      max-width: 430px;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      pointer-events: none;
+    }
+
+    .toast {
+      pointer-events: auto;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 14px;
+      border-radius: 18px;
+      background: rgba(9, 16, 25, 0.96);
+      border: 1px solid rgba(255, 223, 139, 0.16);
+      box-shadow: var(--shadow);
+      animation: toastIn 0.35s ease;
+    }
+
+    .toast-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(244, 201, 93, 0.12);
+      color: var(--gold-2);
+      font-size: 14px;
+    }
+
+    .toast-body strong {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+
+    .toast-body p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    @keyframes toastIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    /* =========================
+       FIM: TOASTS
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: MODAL DE SAÍDA
+    ========================= */
+    .exit-modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(3, 8, 14, 0.84);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 60;
+    }
+
+    .exit-modal.show {
+      display: flex;
+    }
+
+    .exit-box {
+      width: 100%;
+      max-width: 390px;
+      background: linear-gradient(180deg, rgba(17, 27, 39, 0.98), rgba(10, 18, 28, 0.98));
+      border: 1px solid rgba(255, 223, 139, 0.14);
+      border-radius: 24px;
+      padding: 20px;
+      box-shadow: var(--shadow);
+      animation: modalUp 0.25s ease;
+    }
+
+    @keyframes modalUp {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .exit-box h4 {
+      font-size: 22px;
+      line-height: 1.15;
+      margin-bottom: 10px;
+    }
+
+    .exit-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 16px;
+    }
+    /* =========================
+       FIM: MODAL DE SAÍDA
+    ========================= */
+
+
+    /* =========================
+       INÍCIO: RESPONSIVO
+    ========================= */
+    @media (min-width: 768px) {
+      .app {
+        max-width: 520px;
+        padding-top: 20px;
+      }
+
+      .hero h2 {
+        font-size: 30px;
+      }
+
+      .chart-wrap {
+        height: 250px;
+      }
+
+      .sticky-cta-inner {
+        max-width: 520px;
+      }
+    }
+    /* =========================
+       FIM: RESPONSIVO
+    ========================= */
+  </style>
+</head>
+<body>
+
+  <div class="bg-glow">
+    <div class="glow one"></div>
+    <div class="glow two"></div>
+    <div class="glow three"></div>
+  </div>
+
+  <main class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-badge">⚡</div>
+        <div class="brand-text">
+          <h1>Momento de Ouro</h1>
+          <p>Leitura rápida no telemóvel</p>
+        </div>
+      </div>
+      <div class="status-live">● Sistema activo</div>
+    </header>
+
+    <section class="urgency-strip">
+      <strong>Janela favorável detectada</strong>
+      <p>Escolhe uma das opções abaixo para continuar.</p>
+      <div class="attention-bar">
+        <div class="attention-fill"></div>
+      </div>
+    </section>
+
+    <section class="card hero">
+      <div class="mini-label">⚡ 2 opções compatíveis</div>
+      <h2>Analisando Velas e o Risco Favorável das Casas</h2>
+      <p>
+        O sistema funciona com as opções recomendadas abaixo.
+        Cria conta em uma delas para continuar.
+      </p>
+
+      <div class="hero-info">
+        <div class="info-box">
+          <strong>Live</strong>
+          <span>leitura actualizada</span>
+        </div>
+        <div class="info-box">
+          <strong>2</strong>
+          <span>casas compatíveis</span>
+        </div>
+        <div class="info-box">
+          <strong>Fast</strong>
+          <span>uso rápido</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="section-title">
+        <h3>Painel de risco</h3>
+        <span id="clockText">Actualizado agora</span>
+      </div>
+
+      <div class="risk-head">
+        <div class="risk-name">Estado actual</div>
+        <div id="riskBadge" class="risk-badge green">Baixo risco</div>
+      </div>
+
+      <div class="risk-main">
+        <div>
+          <div id="riskPercent" class="risk-percent">27%</div>
+          <div id="riskSub" class="risk-sub">Leitura favorável em observação</div>
+        </div>
+        <div class="pulse-dot"></div>
+      </div>
+
+      <div class="chart-wrap">
+        <div class="chart-grid"></div>
+        <canvas id="riskCanvas"></canvas>
+      </div>
+
+      <div class="chart-footer">
+        <div id="microStatus" class="micro-status">Sistema a acompanhar oscilação...</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="message-box">
+        <strong id="mainSystemMessage">Entrada compatível detectada</strong>
+        <p id="mainSystemDescription">
+          Para usar o sistema, activa uma das casas recomendadas abaixo.
+        </p>
+      </div>
+    </section>
+
+    <section class="card cta-card" id="ctaSection">
+      <h3>Cria conta e continua agora</h3>
+      <p>Escolhe uma das duas casas compatíveis com o sistema.</p>
+
+      <div class="cta-highlight">
+        O acesso recomendado ao Momento de Ouro funciona com estas 2 opções.
+      </div>
+
+      <div class="cta-buttons">
+        <a href="#" class="btn btn-primary" id="option1Btn">⚡ Criar conta na Opção 1</a>
+        <a href="#" class="btn btn-secondary" id="option2Btn">🔒 Criar conta na Opção 2</a>
+      </div>
+
+      <div class="cta-note">
+        Escolhe uma opção e continua.
+      </div>
+    </section>
+  </main>
+
+  <div class="sticky-cta">
+    <div class="sticky-cta-inner">
+      <a href="#" class="sticky-btn primary" id="stickyOption1Btn">Opção 1</a>
+      <a href="#" class="sticky-btn secondary" id="stickyOption2Btn">Opção 2</a>
+    </div>
+  </div>
+
+  <div class="toast-wrap" id="toastWrap"></div>
+
+  <div class="exit-modal" id="exitModal">
+    <div class="exit-box">
+      <h4>Queres sair agora?</h4>
+      <p>
+        Podes perder a oportunidade de continuar a usar o sistema com uma das opções compatíveis.
+      </p>
+
+      <div class="exit-actions">
+        <a href="#ctaSection" class="btn btn-primary" id="stayBtn">Continuar agora</a>
+        <button class="btn btn-secondary" id="closeExitModalBtn">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* =========================
+       INÍCIO: CONFIGURAÇÕES
+    ========================= */
+    const OPTION_1_LINK = "https://sshortly.net/2304f61";
+    const OPTION_2_LINK = "https://tracking.olabet.co.mz/C.ashx?btag=a_4465b_24c_&affid=4313&siteid=4465&adid=24&c=";
+    /* =========================
+       FIM: CONFIGURAÇÕES
+    ========================= */
+
+    /* =========================
+       INÍCIO: ELEMENTOS
+    ========================= */
+    const riskCanvas = document.getElementById("riskCanvas");
+    const ctx = riskCanvas.getContext("2d");
+
+    const riskPercentEl = document.getElementById("riskPercent");
+    const riskBadgeEl = document.getElementById("riskBadge");
+    const riskSubEl = document.getElementById("riskSub");
+    const microStatusEl = document.getElementById("microStatus");
+    const clockTextEl = document.getElementById("clockText");
+    const mainSystemMessageEl = document.getElementById("mainSystemMessage");
+    const mainSystemDescriptionEl = document.getElementById("mainSystemDescription");
+
+    const option1Btn = document.getElementById("option1Btn");
+    const option2Btn = document.getElementById("option2Btn");
+    const stickyOption1Btn = document.getElementById("stickyOption1Btn");
+    const stickyOption2Btn = document.getElementById("stickyOption2Btn");
+
+    const toastWrap = document.getElementById("toastWrap");
+    const exitModal = document.getElementById("exitModal");
+    const stayBtn = document.getElementById("stayBtn");
+    const closeExitModalBtn = document.getElementById("closeExitModalBtn");
+    /* =========================
+       FIM: ELEMENTOS
+    ========================= */
+
+    /* =========================
+       INÍCIO: LINKS
+    ========================= */
+    option1Btn.href = OPTION_1_LINK;
+    option2Btn.href = OPTION_2_LINK;
+    stickyOption1Btn.href = OPTION_1_LINK;
+    stickyOption2Btn.href = OPTION_2_LINK;
+    /* =========================
+       FIM: LINKS
+    ========================= */
+
+    /* =========================
+       INÍCIO: UTILITÁRIOS
+    ========================= */
+    function randomBetween(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function clamp(value, min, max) {
+      return Math.max(min, Math.min(max, value));
+    }
+
+    function getRiskZone(value) {
+      if (value <= 35) return "green";
+      if (value <= 65) return "yellow";
+      return "red";
+    }
+
+    function getRiskLabel(value) {
+      if (value <= 35) return "Baixo risco";
+      if (value <= 65) return "Risco moderado";
+      return "Alto risco";
+    }
+
+    function getRiskSubText(value) {
+      if (value <= 35) return "Leitura favorável em observação";
+      if (value <= 65) return "Oscilação intermédia detectada";
+      return "Atenção reforçada na leitura actual";
+    }
+
+    function getMicroStatus(value) {
+      if (value <= 35) return "Risco favorável detectado...";
+      if (value <= 65) return "Movimento moderado detectado...";
+      return "Atenção redobrada no painel...";
+    }
+
+    function getMainMessageByZone(value) {
+      if (value <= 35) {
+        return {
+          title: "Risco favorável detectado",
+          description: "Escolhe uma das casas compatíveis para continuar."
+        };
+      }
+
+      if (value <= 65) {
+        return {
+          title: "Oscilação em análise",
+          description: "Activa uma das opções para usar o sistema."
+        };
+      }
+
+      return {
+        title: "Zona de atenção",
+        description: "Continua com uma das casas compatíveis abaixo."
+        };
+      }
+
+    function formatClockText() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, "0");
+      const m = String(now.getMinutes()).padStart(2, "0");
+      const s = String(now.getSeconds()).padStart(2, "0");
+      return `Actualizado ${h}:${m}:${s}`;
+    }
+    /* =========================
+       FIM: UTILITÁRIOS
+    ========================= */
+
+    /* =========================
+       INÍCIO: DADOS DO GRÁFICO
+    ========================= */
+    let riskPoints = [];
+    let currentRisk = 27;
+
+    function generateInitialPoints() {
+      riskPoints = [];
+      let value = 28;
+
+      for (let i = 0; i < 36; i++) {
+        value += randomBetween(-8, 8);
+
+        if (Math.random() < 0.18) {
+          value += randomBetween(-14, 14);
+        }
+
+        value = clamp(value, 8, 92);
+        riskPoints.push(value);
+      }
+
+      currentRisk = riskPoints[riskPoints.length - 1];
+      updateRiskUI(currentRisk);
+    }
+    /* =========================
+       FIM: DADOS DO GRÁFICO
+    ========================= */
+
+    /* =========================
+       INÍCIO: CANVAS
+    ========================= */
+    function resizeCanvas() {
+      const rect = riskCanvas.getBoundingClientRect();
+      riskCanvas.width = rect.width * window.devicePixelRatio;
+      riskCanvas.height = rect.height * window.devicePixelRatio;
+      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+      drawChart();
+    }
+
+    function drawRiskBands(width, height) {
+      const redTop = 0;
+      const yellowTop = height * 0.35;
+      const greenTop = height * 0.65;
+
+      ctx.fillStyle = "rgba(255, 92, 92, 0.04)";
+      ctx.fillRect(0, redTop, width, yellowTop);
+
+      ctx.fillStyle = "rgba(255, 191, 71, 0.04)";
+      ctx.fillRect(0, yellowTop, width, greenTop - yellowTop);
+
+      ctx.fillStyle = "rgba(38, 208, 124, 0.04)";
+      ctx.fillRect(0, greenTop, width, height - greenTop);
+    }
+
+    function drawChart() {
+      const width = riskCanvas.clientWidth;
+      const height = riskCanvas.clientHeight;
+
+      ctx.clearRect(0, 0, width, height);
+      if (!riskPoints.length) return;
+
+      drawRiskBands(width, height);
+
+      const paddingX = 10;
+      const stepX = (width - paddingX * 2) / (riskPoints.length - 1);
+
+      ctx.beginPath();
+      riskPoints.forEach((value, i) => {
+        const x = paddingX + i * stepX;
+        const y = height - (value / 100) * (height - 16) - 8;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      ctx.lineTo(paddingX + (riskPoints.length - 1) * stepX, height - 8);
+      ctx.lineTo(paddingX, height - 8);
+      ctx.closePath();
+
+      const gradientArea = ctx.createLinearGradient(0, 0, 0, height);
+      gradientArea.addColorStop(0, "rgba(244, 201, 93, 0.22)");
+      gradientArea.addColorStop(1, "rgba(244, 201, 93, 0.02)");
+      ctx.fillStyle = gradientArea;
+      ctx.fill();
+
+      ctx.beginPath();
+      riskPoints.forEach((value, i) => {
+        const x = paddingX + i * stepX;
+        const y = height - (value / 100) * (height - 16) - 8;
+        if (i === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      const lineGradient = ctx.createLinearGradient(0, 0, width, 0);
+      lineGradient.addColorStop(0, "#f4c95d");
+      lineGradient.addColorStop(0.5, "#ffdf8b");
+      lineGradient.addColorStop(1, "#26d07c");
+
+      ctx.strokeStyle = lineGradient;
+      ctx.lineWidth = 3;
+      ctx.shadowColor = "rgba(244, 201, 93, 0.25)";
+      ctx.shadowBlur = 14;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      const lastValue = riskPoints[riskPoints.length - 1];
+      const lastX = paddingX + (riskPoints.length - 1) * stepX;
+      const lastY = height - (lastValue / 100) * (height - 16) - 8;
+      const zone = getRiskZone(lastValue);
+
+      ctx.beginPath();
+      ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
+      ctx.fillStyle = zone === "green" ? "#26d07c" : zone === "yellow" ? "#ffbf47" : "#ff5c5c";
+      ctx.shadowColor = ctx.fillStyle;
+      ctx.shadowBlur = 16;
+      ctx.fill();
+      ctx.shadowBlur = 0;
+    }
+    /* =========================
+       FIM: CANVAS
+    ========================= */
+
+    /* =========================
+       INÍCIO: ACTUALIZAR UI
+    ========================= */
+    function updateRiskUI(value) {
+      currentRisk = value;
+
+      const zone = getRiskZone(value);
+      const riskLabel = getRiskLabel(value);
+      const riskSub = getRiskSubText(value);
+      const microStatus = getMicroStatus(value);
+      const mainMessage = getMainMessageByZone(value);
+
+      riskPercentEl.textContent = `${value}%`;
+      riskSubEl.textContent = riskSub;
+      microStatusEl.textContent = microStatus;
+
+      riskBadgeEl.textContent = riskLabel;
+      riskBadgeEl.className = `risk-badge ${zone}`;
+
+      mainSystemMessageEl.textContent = mainMessage.title;
+      mainSystemDescriptionEl.textContent = mainMessage.description;
+    }
+
+    function advanceChart() {
+      let nextValue = currentRisk + randomBetween(-12, 12);
+
+      if (Math.random() < 0.25) {
+        nextValue += randomBetween(-16, 16);
+      }
+
+      nextValue = clamp(nextValue, 7, 94);
+
+      riskPoints.push(nextValue);
+      if (riskPoints.length > 36) {
+        riskPoints.shift();
+      }
+
+      updateRiskUI(nextValue);
+      drawChart();
+    }
+    /* =========================
+       FIM: ACTUALIZAR UI
+    ========================= */
+
+    /* =========================
+       INÍCIO: TOASTS
+    ========================= */
+    const toastMessages = [
+      { title: "Análise actualizada", text: "Sistema a verificar velas e risco das casas." },
+      { title: "Janela detectada", text: "Escolhe uma das opções compatíveis." },
+      { title: "Painel activo", text: "Leitura actualizada em tempo real." },
+      { title: "Novo movimento", text: "Oscilação detectada no painel." }
+    ];
+
+    function createToast() {
+      const msg = toastMessages[randomBetween(0, toastMessages.length - 1)];
+
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.innerHTML = `
+        <div class="toast-icon">⚡</div>
+        <div class="toast-body">
+          <strong>${msg.title}</strong>
+          <p>${msg.text}</p>
+        </div>
+      `;
+
+      toastWrap.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.opacity = "0";
+        toast.style.transform = "translateY(8px)";
+        toast.style.transition = "0.3s ease";
+      }, 3600);
+
+      setTimeout(() => {
+        toast.remove();
+      }, 4100);
+    }
+    /* =========================
+       FIM: TOASTS
+    ========================= */
+
+    /* =========================
+       INÍCIO: RELÓGIO
+    ========================= */
+    function updateClockText() {
+      clockTextEl.textContent = formatClockText();
+    }
+    /* =========================
+       FIM: RELÓGIO
+    ========================= */
+
+    /* =========================
+       INÍCIO: SAÍDA
+    ========================= */
+    let exitModalShown = false;
+    let allowExitModal = true;
+
+    function showExitModal() {
+      if (exitModalShown || !allowExitModal) return;
+      exitModal.classList.add("show");
+      exitModalShown = true;
+    }
+
+    function hideExitModal() {
+      exitModal.classList.remove("show");
+      exitModalShown = false;
+    }
+
+    closeExitModalBtn.addEventListener("click", hideExitModal);
+
+    stayBtn.addEventListener("click", function () {
+      hideExitModal();
+    });
+
+    exitModal.addEventListener("click", function (e) {
+      if (e.target === exitModal) hideExitModal();
+    });
+
+    window.addEventListener("beforeunload", function (e) {
+      if (!allowExitModal) return;
+      e.preventDefault();
+      e.returnValue = "";
+    });
+
+    document.addEventListener("visibilitychange", function () {
+      if (document.visibilityState === "hidden" && allowExitModal) {
+        sessionStorage.setItem("attemptedLeave", "1");
+      }
+
+      if (document.visibilityState === "visible" && sessionStorage.getItem("attemptedLeave") === "1") {
+        sessionStorage.removeItem("attemptedLeave");
+        setTimeout(showExitModal, 500);
+      }
+    });
+
+    setTimeout(() => {
+      if (allowExitModal) showExitModal();
+    }, 22000);
+
+    function disableExitProtectionOnAction() {
+      allowExitModal = false;
+    }
+
+    option1Btn.addEventListener("click", disableExitProtectionOnAction);
+    option2Btn.addEventListener("click", disableExitProtectionOnAction);
+    stickyOption1Btn.addEventListener("click", disableExitProtectionOnAction);
+    stickyOption2Btn.addEventListener("click", disableExitProtectionOnAction);
+    /* =========================
+       FIM: SAÍDA
+    ========================= */
+
+    /* =========================
+       INÍCIO: INIT
+    ========================= */
+    function init() {
+      generateInitialPoints();
+      resizeCanvas();
+      updateClockText();
+      drawChart();
+
+      setInterval(advanceChart, 1800);
+      setInterval(updateClockText, 1000);
+      setInterval(createToast, 7000);
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    init();
+    /* =========================
+       FIM: INIT
+    ========================= */
+  </script>
+</body>
+</html>
