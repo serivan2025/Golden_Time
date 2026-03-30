@@ -5,9 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Momento de Ouro</title>
   <style>
-    /* =========================
-       INÍCIO: RESET E BASE
-    ========================= */
     * {
       margin: 0;
       padding: 0;
@@ -16,7 +13,8 @@
     }
 
     :root {
-      --bg: #081018;
+      --bg: #071019;
+      --bg-2: #0b1320;
       --card: rgba(17, 27, 39, 0.88);
       --card-border: rgba(255, 215, 100, 0.12);
       --gold: #f4c95d;
@@ -30,7 +28,7 @@
       --shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
       --shadow-gold: 0 14px 35px rgba(244, 201, 93, 0.18);
       --radius: 20px;
-      --sticky-height: 84px;
+      --sticky-height: 92px;
     }
 
     html {
@@ -45,7 +43,7 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
-      padding-bottom: calc(var(--sticky-height) + 26px);
+      padding-bottom: calc(var(--sticky-height) + 24px);
     }
 
     a {
@@ -56,14 +54,7 @@
     button {
       font-family: inherit;
     }
-    /* =========================
-       FIM: RESET E BASE
-    ========================= */
 
-
-    /* =========================
-       INÍCIO: FUNDO
-    ========================= */
     .bg-glow {
       position: fixed;
       inset: 0;
@@ -76,7 +67,7 @@
       position: absolute;
       border-radius: 50%;
       filter: blur(70px);
-      opacity: 0.25;
+      opacity: 0.22;
       animation: floatGlow 10s ease-in-out infinite;
     }
 
@@ -110,14 +101,7 @@
       0%, 100% { transform: translateY(0) scale(1); }
       50% { transform: translateY(-18px) scale(1.05); }
     }
-    /* =========================
-       FIM: FUNDO
-    ========================= */
 
-
-    /* =========================
-       INÍCIO: LAYOUT
-    ========================= */
     .app {
       position: relative;
       z-index: 1;
@@ -185,14 +169,7 @@
       0%, 100% { box-shadow: 0 0 0 0 rgba(38, 208, 124, 0.10); }
       50% { box-shadow: 0 0 0 10px rgba(38, 208, 124, 0.01); }
     }
-    /* =========================
-       FIM: LAYOUT
-    ========================= */
 
-
-    /* =========================
-       INÍCIO: BLOCOS
-    ========================= */
     .card {
       background: var(--card);
       border: 1px solid var(--card-border);
@@ -242,8 +219,8 @@
 
     .hero p,
     .urgency-strip p,
+    .highlight-card p,
     .cta-card p,
-    .message-box p,
     .exit-box p {
       color: var(--muted);
       font-size: 13px;
@@ -257,7 +234,7 @@
       margin-top: 16px;
     }
 
-    .hero-info .info-box {
+    .info-box {
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.04);
       border-radius: 16px;
@@ -265,17 +242,88 @@
       text-align: center;
     }
 
-    .hero-info .info-box strong {
+    .info-box strong {
       display: block;
       font-size: 15px;
       color: var(--gold-2);
       margin-bottom: 4px;
     }
 
-    .hero-info .info-box span {
+    .info-box span {
       font-size: 11px;
       color: var(--muted);
       line-height: 1.3;
+    }
+
+    .urgency-strip {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 18px;
+      box-shadow: var(--shadow-gold);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      transition: 0.25s ease;
+    }
+
+    .urgency-strip low {}
+
+    .urgency-strip.low {
+      background: linear-gradient(135deg, rgba(38,208,124,0.12), rgba(244,201,93,0.05));
+      border: 1px solid rgba(38,208,124,0.20);
+    }
+
+    .urgency-strip.medium {
+      background: linear-gradient(135deg, rgba(255,191,71,0.14), rgba(244,201,93,0.06));
+      border: 1px solid rgba(255,191,71,0.22);
+    }
+
+    .urgency-strip.high {
+      background: linear-gradient(135deg, rgba(255,92,92,0.14), rgba(255,191,71,0.05));
+      border: 1px solid rgba(255,92,92,0.22);
+    }
+
+    .urgency-strip strong {
+      font-size: 14px;
+      color: var(--gold-3);
+    }
+
+    .attention-bar {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.04);
+    }
+
+    .attention-fill {
+      height: 100%;
+      width: 68%;
+      border-radius: inherit;
+      animation: moveAttention 2.4s ease-in-out infinite;
+      transform-origin: left;
+      transition: 0.25s ease;
+    }
+
+    .attention-fill.low {
+      background: linear-gradient(90deg, #26d07c, #4be39a);
+      box-shadow: 0 0 18px rgba(38,208,124,0.22);
+    }
+
+    .attention-fill.medium {
+      background: linear-gradient(90deg, #ffbf47, #ffd36f);
+      box-shadow: 0 0 18px rgba(255,191,71,0.22);
+    }
+
+    .attention-fill.high {
+      background: linear-gradient(90deg, #ff5c5c, #ff8a8a);
+      box-shadow: 0 0 18px rgba(255,92,92,0.24);
+    }
+
+    @keyframes moveAttention {
+      0%, 100% { width: 58%; }
+      50% { width: 83%; }
     }
 
     .section-title {
@@ -295,62 +343,7 @@
       color: var(--muted);
       font-size: 12px;
     }
-    /* =========================
-       FIM: BLOCOS
-    ========================= */
 
-
-    /* =========================
-       INÍCIO: URGÊNCIA
-    ========================= */
-    .urgency-strip {
-      margin-bottom: 14px;
-      padding: 12px 14px;
-      border-radius: 18px;
-      background: linear-gradient(135deg, rgba(244,201,93,0.10), rgba(255,92,92,0.07));
-      border: 1px solid rgba(255,223,139,0.14);
-      box-shadow: var(--shadow-gold);
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .urgency-strip strong {
-      font-size: 13px;
-      color: var(--gold-3);
-    }
-
-    .attention-bar {
-      width: 100%;
-      height: 9px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.04);
-    }
-
-    .attention-fill {
-      height: 100%;
-      width: 68%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, var(--gold), var(--gold-2), #ffd46b);
-      box-shadow: 0 0 18px rgba(244,201,93,0.22);
-      animation: moveAttention 2.4s ease-in-out infinite;
-      transform-origin: left;
-    }
-
-    @keyframes moveAttention {
-      0%, 100% { width: 58%; }
-      50% { width: 83%; }
-    }
-    /* =========================
-       FIM: URGÊNCIA
-    ========================= */
-
-
-    /* =========================
-       INÍCIO: GRÁFICO
-    ========================= */
     .risk-head {
       display: flex;
       justify-content: space-between;
@@ -433,7 +426,7 @@
     .chart-wrap {
       position: relative;
       width: 100%;
-      height: 220px;
+      height: 230px;
       border-radius: 18px;
       overflow: hidden;
       background:
@@ -448,7 +441,7 @@
       background-image:
         linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
-      background-size: 100% 44px, 44px 100%;
+      background-size: 100% 38px, 32px 100%;
       opacity: 0.28;
     }
 
@@ -472,35 +465,60 @@
       font-size: 12px;
       color: var(--gold-2);
     }
-    /* =========================
-       FIM: GRÁFICO
-    ========================= */
 
+    .highlight-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(244,201,93,0.18);
+      box-shadow: 0 14px 36px rgba(244,201,93,0.10);
+    }
 
-    /* =========================
-       INÍCIO: MENSAGEM CURTA
-    ========================= */
-    .message-box {
+    .highlight-card::before {
+      content: "";
+      position: absolute;
+      top: -60px;
+      right: -60px;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(244,201,93,0.18), transparent 70%);
+    }
+
+    .highlight-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .highlight-badge {
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(244,201,93,0.10);
+      color: var(--gold-2);
+      border: 1px solid rgba(244,201,93,0.14);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .house-name {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .compat-note {
+      margin-top: 12px;
+      padding: 12px 14px;
       border-radius: 16px;
-      padding: 14px;
       background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.05);
+      color: var(--gold-3);
+      font-size: 13px;
+      line-height: 1.55;
     }
 
-    .message-box strong {
-      display: block;
-      font-size: 14px;
-      margin-bottom: 6px;
-      color: var(--gold-2);
-    }
-    /* =========================
-       FIM: MENSAGEM CURTA
-    ========================= */
-
-
-    /* =========================
-       INÍCIO: CTA
-    ========================= */
     .cta-card h3 {
       font-size: 20px;
       margin-bottom: 8px;
@@ -585,14 +603,20 @@
       text-align: center;
       line-height: 1.5;
     }
-    /* =========================
-       FIM: CTA
-    ========================= */
 
+    .shake {
+      animation: shakeBtn 0.55s ease;
+    }
 
-    /* =========================
-       INÍCIO: STICKY CTA
-    ========================= */
+    @keyframes shakeBtn {
+      0% { transform: translateX(0); }
+      20% { transform: translateX(-3px); }
+      40% { transform: translateX(3px); }
+      60% { transform: translateX(-3px); }
+      80% { transform: translateX(3px); }
+      100% { transform: translateX(0); }
+    }
+
     .sticky-cta {
       position: fixed;
       left: 0;
@@ -613,12 +637,12 @@
       padding: 10px;
       box-shadow: var(--shadow);
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: 1.2fr 1fr;
       gap: 10px;
     }
 
     .sticky-btn {
-      min-height: 50px;
+      min-height: 52px;
       border-radius: 14px;
       padding: 12px 10px;
       font-size: 13px;
@@ -641,19 +665,16 @@
       color: var(--text);
       border: 1px solid rgba(255,255,255,0.06);
     }
-    /* =========================
-       FIM: STICKY CTA
-    ========================= */
 
+    .sticky-btn:active {
+      transform: scale(0.98);
+    }
 
-    /* =========================
-       INÍCIO: TOASTS
-    ========================= */
     .toast-wrap {
       position: fixed;
       left: 50%;
       transform: translateX(-50%);
-      bottom: 102px;
+      bottom: 104px;
       width: calc(100% - 24px);
       max-width: 430px;
       z-index: 20;
@@ -712,14 +733,7 @@
         transform: translateY(0);
       }
     }
-    /* =========================
-       FIM: TOASTS
-    ========================= */
 
-
-    /* =========================
-       INÍCIO: MODAL DE SAÍDA
-    ========================= */
     .exit-modal {
       position: fixed;
       inset: 0;
@@ -769,14 +783,7 @@
       gap: 10px;
       margin-top: 16px;
     }
-    /* =========================
-       FIM: MODAL DE SAÍDA
-    ========================= */
 
-
-    /* =========================
-       INÍCIO: RESPONSIVO
-    ========================= */
     @media (min-width: 768px) {
       .app {
         max-width: 520px;
@@ -788,20 +795,16 @@
       }
 
       .chart-wrap {
-        height: 250px;
+        height: 260px;
       }
 
       .sticky-cta-inner {
         max-width: 520px;
       }
     }
-    /* =========================
-       FIM: RESPONSIVO
-    ========================= */
   </style>
 </head>
 <body>
-
   <div class="bg-glow">
     <div class="glow one"></div>
     <div class="glow two"></div>
@@ -820,11 +823,11 @@
       <div class="status-live">● Sistema activo</div>
     </header>
 
-    <section class="urgency-strip">
-      <strong>Janela favorável detectada</strong>
-      <p>Escolhe uma das opções abaixo para continuar.</p>
+    <section class="urgency-strip low" id="urgencyStrip">
+      <strong id="urgencyTitle">🟢 Risco Baixo Detectado</strong>
+      <p id="urgencyText">Momento mais favorável no painel. Escolhe uma das opções abaixo para continuar.</p>
       <div class="attention-bar">
-        <div class="attention-fill"></div>
+        <div class="attention-fill low" id="attentionFill"></div>
       </div>
     </section>
 
@@ -868,7 +871,7 @@
           <div id="riskPercent" class="risk-percent">27%</div>
           <div id="riskSub" class="risk-sub">Leitura favorável em observação</div>
         </div>
-        <div class="pulse-dot"></div>
+        <div class="pulse-dot" id="pulseDot"></div>
       </div>
 
       <div class="chart-wrap">
@@ -877,16 +880,27 @@
       </div>
 
       <div class="chart-footer">
-        <div id="microStatus" class="micro-status">Sistema a acompanhar oscilação...</div>
+        <div id="microStatus" class="micro-status">Sistema a acompanhar as velas...</div>
       </div>
     </section>
 
-    <section class="card">
-      <div class="message-box">
-        <strong id="mainSystemMessage">Entrada compatível detectada</strong>
-        <p id="mainSystemDescription">
-          Para usar o sistema, activa uma das casas recomendadas abaixo.
-        </p>
+    <section class="card highlight-card">
+      <div class="highlight-top">
+        <div>
+          <div class="mini-label" style="margin-bottom:8px;">🔥 Opção principal</div>
+          <div class="house-name">Opção 1</div>
+        </div>
+        <div class="highlight-badge">Mais destacada</div>
+      </div>
+
+      <p>
+        Esta é a opção geralmente mais estaveis mas para novas contas. <br>
+        Opção 2 requer contas novas.
+        
+      </p>
+
+      <div class="compat-note">
+        Para continuar com o Momento de Ouro, usa uma das duas opções compatíveis abaixo.
       </div>
     </section>
 
@@ -895,7 +909,7 @@
       <p>Escolhe uma das duas casas compatíveis com o sistema.</p>
 
       <div class="cta-highlight">
-        O acesso recomendado ao Momento de Ouro funciona com estas 2 opções.
+        Quando o risco estiver favorável divirta-se mais , divirta-se com consciencia.
       </div>
 
       <div class="cta-buttons">
@@ -911,7 +925,7 @@
 
   <div class="sticky-cta">
     <div class="sticky-cta-inner">
-      <a href="#" class="sticky-btn primary" id="stickyOption1Btn">Opção 1</a>
+      <a href="#" class="sticky-btn primary" id="stickyOption1Btn">Activar Opção 1</a>
       <a href="#" class="sticky-btn secondary" id="stickyOption2Btn">Opção 2</a>
     </div>
   </div>
@@ -933,28 +947,23 @@
   </div>
 
   <script>
-    /* =========================
-       INÍCIO: CONFIGURAÇÕES
-    ========================= */
     const OPTION_1_LINK = "https://sshortly.net/2304f61";
     const OPTION_2_LINK = "https://tracking.olabet.co.mz/C.ashx?btag=a_4465b_24c_&affid=4313&siteid=4465&adid=24&c=";
-    /* =========================
-       FIM: CONFIGURAÇÕES
-    ========================= */
 
-    /* =========================
-       INÍCIO: ELEMENTOS
-    ========================= */
     const riskCanvas = document.getElementById("riskCanvas");
     const ctx = riskCanvas.getContext("2d");
+
+    const urgencyStripEl = document.getElementById("urgencyStrip");
+    const urgencyTitleEl = document.getElementById("urgencyTitle");
+    const urgencyTextEl = document.getElementById("urgencyText");
+    const attentionFillEl = document.getElementById("attentionFill");
 
     const riskPercentEl = document.getElementById("riskPercent");
     const riskBadgeEl = document.getElementById("riskBadge");
     const riskSubEl = document.getElementById("riskSub");
     const microStatusEl = document.getElementById("microStatus");
     const clockTextEl = document.getElementById("clockText");
-    const mainSystemMessageEl = document.getElementById("mainSystemMessage");
-    const mainSystemDescriptionEl = document.getElementById("mainSystemDescription");
+    const pulseDotEl = document.getElementById("pulseDot");
 
     const option1Btn = document.getElementById("option1Btn");
     const option2Btn = document.getElementById("option2Btn");
@@ -965,24 +974,16 @@
     const exitModal = document.getElementById("exitModal");
     const stayBtn = document.getElementById("stayBtn");
     const closeExitModalBtn = document.getElementById("closeExitModalBtn");
-    /* =========================
-       FIM: ELEMENTOS
-    ========================= */
 
-    /* =========================
-       INÍCIO: LINKS
-    ========================= */
     option1Btn.href = OPTION_1_LINK;
     option2Btn.href = OPTION_2_LINK;
     stickyOption1Btn.href = OPTION_1_LINK;
     stickyOption2Btn.href = OPTION_2_LINK;
-    /* =========================
-       FIM: LINKS
-    ========================= */
 
-    /* =========================
-       INÍCIO: UTILITÁRIOS
-    ========================= */
+    let candles = [];
+    let currentPrice = 34;
+    let currentRisk = 27;
+
     function randomBetween(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
@@ -1010,31 +1011,63 @@
     }
 
     function getMicroStatus(value) {
-      if (value <= 35) return "Risco favorável detectado...";
-      if (value <= 65) return "Movimento moderado detectado...";
-      return "Atenção redobrada no painel...";
+      if (value <= 35) return "Velas a indicar momento mais favorável...";
+      if (value <= 65) return "Velas em zona moderada de análise...";
+      return "Velas em zona de maior atenção...";
     }
 
-    function getMainMessageByZone(value) {
+    function updateUrgencyStrip(value) {
+      let title = "";
+      let text = "";
+      let stripClass = "";
+      let fillClass = "";
+
       if (value <= 35) {
-        return {
-          title: "Risco favorável detectado",
-          description: "Escolhe uma das casas compatíveis para continuar."
-        };
+        title = "🟢 Risco Baixo Detectado";
+        text = "Momento mais favorável no painel. Escolhe uma das opções abaixo para continuar.";
+        stripClass = "low";
+        fillClass = "low";
+      } else if (value <= 65) {
+        title = "⚠️ Risco Moderado Detectado";
+        text = "Oscilação moderada em análise. Continua atento e escolhe uma das opções compatíveis.";
+        stripClass = "medium";
+        fillClass = "medium";
+      } else {
+        title = "🚨 Risco Alto Detectado";
+        text = "Zona de maior atenção no painel. Continua com cuidado e activa uma das opções para seguir.";
+        stripClass = "high";
+        fillClass = "high";
       }
 
-      if (value <= 65) {
-        return {
-          title: "Oscilação em análise",
-          description: "Activa uma das opções para usar o sistema."
-        };
-      }
+      urgencyTitleEl.textContent = title;
+      urgencyTextEl.textContent = text;
+      urgencyStripEl.className = `urgency-strip ${stripClass}`;
+      attentionFillEl.className = `attention-fill ${fillClass}`;
+    }
 
-      return {
-        title: "Zona de atenção",
-        description: "Continua com uma das casas compatíveis abaixo."
-        };
+    function updatePulseColor(value) {
+      if (value <= 35) {
+        pulseDotEl.style.background = "#26d07c";
+      } else if (value <= 65) {
+        pulseDotEl.style.background = "#ffbf47";
+      } else {
+        pulseDotEl.style.background = "#ff5c5c";
       }
+    }
+
+    function triggerCTAHighlight(value) {
+      const isFavorable = value <= 35;
+      if (!isFavorable) return;
+
+      option1Btn.classList.remove("shake");
+      stickyOption1Btn.classList.remove("shake");
+
+      void option1Btn.offsetWidth;
+      void stickyOption1Btn.offsetWidth;
+
+      option1Btn.classList.add("shake");
+      stickyOption1Btn.classList.add("shake");
+    }
 
     function formatClockText() {
       const now = new Date();
@@ -1043,47 +1076,44 @@
       const s = String(now.getSeconds()).padStart(2, "0");
       return `Actualizado ${h}:${m}:${s}`;
     }
-    /* =========================
-       FIM: UTILITÁRIOS
-    ========================= */
 
-    /* =========================
-       INÍCIO: DADOS DO GRÁFICO
-    ========================= */
-    let riskPoints = [];
-    let currentRisk = 27;
+    function makeCandle(prevClose) {
+      const open = prevClose;
+      let close = open + randomBetween(-12, 12);
 
-    function generateInitialPoints() {
-      riskPoints = [];
-      let value = 28;
-
-      for (let i = 0; i < 36; i++) {
-        value += randomBetween(-8, 8);
-
-        if (Math.random() < 0.18) {
-          value += randomBetween(-14, 14);
-        }
-
-        value = clamp(value, 8, 92);
-        riskPoints.push(value);
+      if (Math.random() < 0.22) {
+        close += randomBetween(-10, 10);
       }
 
-      currentRisk = riskPoints[riskPoints.length - 1];
+      close = clamp(close, 8, 92);
+
+      const high = clamp(Math.max(open, close) + randomBetween(2, 8), 8, 96);
+      const low = clamp(Math.min(open, close) - randomBetween(2, 8), 4, 94);
+
+      return { open, high, low, close };
+    }
+
+    function generateInitialCandles() {
+      candles = [];
+      let price = 34;
+
+      for (let i = 0; i < 26; i++) {
+        const candle = makeCandle(price);
+        candles.push(candle);
+        price = candle.close;
+      }
+
+      currentPrice = price;
+      currentRisk = Math.round(price);
       updateRiskUI(currentRisk);
     }
-    /* =========================
-       FIM: DADOS DO GRÁFICO
-    ========================= */
 
-    /* =========================
-       INÍCIO: CANVAS
-    ========================= */
     function resizeCanvas() {
       const rect = riskCanvas.getBoundingClientRect();
       riskCanvas.width = rect.width * window.devicePixelRatio;
       riskCanvas.height = rect.height * window.devicePixelRatio;
       ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
-      drawChart();
+      drawCandles();
     }
 
     function drawRiskBands(width, height) {
@@ -1101,76 +1131,62 @@
       ctx.fillRect(0, greenTop, width, height - greenTop);
     }
 
-    function drawChart() {
+    function valueToY(value, height) {
+      return height - (value / 100) * (height - 20) - 10;
+    }
+
+    function drawCandles() {
       const width = riskCanvas.clientWidth;
       const height = riskCanvas.clientHeight;
 
       ctx.clearRect(0, 0, width, height);
-      if (!riskPoints.length) return;
+      if (!candles.length) return;
 
       drawRiskBands(width, height);
 
-      const paddingX = 10;
-      const stepX = (width - paddingX * 2) / (riskPoints.length - 1);
+      const count = candles.length;
+      const slot = width / count;
+      const candleWidth = Math.max(6, slot * 0.45);
 
-      ctx.beginPath();
-      riskPoints.forEach((value, i) => {
-        const x = paddingX + i * stepX;
-        const y = height - (value / 100) * (height - 16) - 8;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      candles.forEach((candle, index) => {
+        const x = index * slot + slot / 2;
+        const yOpen = valueToY(candle.open, height);
+        const yClose = valueToY(candle.close, height);
+        const yHigh = valueToY(candle.high, height);
+        const yLow = valueToY(candle.low, height);
+
+        const isUp = candle.close <= candle.open;
+        const color = isUp ? "#26d07c" : "#ff5c5c";
+
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.moveTo(x, yHigh);
+        ctx.lineTo(x, yLow);
+        ctx.stroke();
+
+        const bodyTop = Math.min(yOpen, yClose);
+        const bodyHeight = Math.max(4, Math.abs(yClose - yOpen));
+
+        ctx.fillStyle = color;
+        ctx.globalAlpha = 0.92;
+        ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
+        ctx.globalAlpha = 1;
       });
 
-      ctx.lineTo(paddingX + (riskPoints.length - 1) * stepX, height - 8);
-      ctx.lineTo(paddingX, height - 8);
-      ctx.closePath();
-
-      const gradientArea = ctx.createLinearGradient(0, 0, 0, height);
-      gradientArea.addColorStop(0, "rgba(244, 201, 93, 0.22)");
-      gradientArea.addColorStop(1, "rgba(244, 201, 93, 0.02)");
-      ctx.fillStyle = gradientArea;
-      ctx.fill();
+      const last = candles[candles.length - 1];
+      const lastX = (count - 1) * slot + slot / 2;
+      const lastY = valueToY(last.close, height);
 
       ctx.beginPath();
-      riskPoints.forEach((value, i) => {
-        const x = paddingX + i * stepX;
-        const y = height - (value / 100) * (height - 16) - 8;
-        if (i === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
-      });
-
-      const lineGradient = ctx.createLinearGradient(0, 0, width, 0);
-      lineGradient.addColorStop(0, "#f4c95d");
-      lineGradient.addColorStop(0.5, "#ffdf8b");
-      lineGradient.addColorStop(1, "#26d07c");
-
-      ctx.strokeStyle = lineGradient;
-      ctx.lineWidth = 3;
-      ctx.shadowColor = "rgba(244, 201, 93, 0.25)";
-      ctx.shadowBlur = 14;
-      ctx.stroke();
-      ctx.shadowBlur = 0;
-
-      const lastValue = riskPoints[riskPoints.length - 1];
-      const lastX = paddingX + (riskPoints.length - 1) * stepX;
-      const lastY = height - (lastValue / 100) * (height - 16) - 8;
-      const zone = getRiskZone(lastValue);
-
-      ctx.beginPath();
-      ctx.arc(lastX, lastY, 5, 0, Math.PI * 2);
-      ctx.fillStyle = zone === "green" ? "#26d07c" : zone === "yellow" ? "#ffbf47" : "#ff5c5c";
+      ctx.arc(lastX, lastY, 4.5, 0, Math.PI * 2);
+      ctx.fillStyle = currentRisk <= 35 ? "#26d07c" : currentRisk <= 65 ? "#ffbf47" : "#ff5c5c";
       ctx.shadowColor = ctx.fillStyle;
       ctx.shadowBlur = 16;
       ctx.fill();
       ctx.shadowBlur = 0;
     }
-    /* =========================
-       FIM: CANVAS
-    ========================= */
 
-    /* =========================
-       INÍCIO: ACTUALIZAR UI
-    ========================= */
     function updateRiskUI(value) {
       currentRisk = value;
 
@@ -1178,7 +1194,6 @@
       const riskLabel = getRiskLabel(value);
       const riskSub = getRiskSubText(value);
       const microStatus = getMicroStatus(value);
-      const mainMessage = getMainMessageByZone(value);
 
       riskPercentEl.textContent = `${value}%`;
       riskSubEl.textContent = riskSub;
@@ -1187,39 +1202,29 @@
       riskBadgeEl.textContent = riskLabel;
       riskBadgeEl.className = `risk-badge ${zone}`;
 
-      mainSystemMessageEl.textContent = mainMessage.title;
-      mainSystemDescriptionEl.textContent = mainMessage.description;
+      updateUrgencyStrip(value);
+      updatePulseColor(value);
+      triggerCTAHighlight(value);
     }
 
-    function advanceChart() {
-      let nextValue = currentRisk + randomBetween(-12, 12);
+    function advanceCandles() {
+      const next = makeCandle(currentPrice);
+      candles.push(next);
 
-      if (Math.random() < 0.25) {
-        nextValue += randomBetween(-16, 16);
+      if (candles.length > 26) {
+        candles.shift();
       }
 
-      nextValue = clamp(nextValue, 7, 94);
-
-      riskPoints.push(nextValue);
-      if (riskPoints.length > 36) {
-        riskPoints.shift();
-      }
-
-      updateRiskUI(nextValue);
-      drawChart();
+      currentPrice = next.close;
+      updateRiskUI(Math.round(next.close));
+      drawCandles();
     }
-    /* =========================
-       FIM: ACTUALIZAR UI
-    ========================= */
 
-    /* =========================
-       INÍCIO: TOASTS
-    ========================= */
     const toastMessages = [
-      { title: "Análise actualizada", text: "Sistema a verificar velas e risco das casas." },
-      { title: "Janela detectada", text: "Escolhe uma das opções compatíveis." },
-      { title: "Painel activo", text: "Leitura actualizada em tempo real." },
-      { title: "Novo movimento", text: "Oscilação detectada no painel." }
+      { title: "Velas actualizadas", text: "O sistema ajustou a leitura do painel." },
+      { title: "Risco recalculado", text: "A faixa superior foi sincronizada com o gráfico." },
+      { title: "Fluxo activo", text: "Escolhe uma das opções compatíveis para continuar." },
+      { title: "Painel em observação", text: "A análise continua activa em tempo real." }
     ];
 
     function createToast() {
@@ -1247,23 +1252,11 @@
         toast.remove();
       }, 4100);
     }
-    /* =========================
-       FIM: TOASTS
-    ========================= */
 
-    /* =========================
-       INÍCIO: RELÓGIO
-    ========================= */
     function updateClockText() {
       clockTextEl.textContent = formatClockText();
     }
-    /* =========================
-       FIM: RELÓGIO
-    ========================= */
 
-    /* =========================
-       INÍCIO: SAÍDA
-    ========================= */
     let exitModalShown = false;
     let allowExitModal = true;
 
@@ -1317,29 +1310,20 @@
     option2Btn.addEventListener("click", disableExitProtectionOnAction);
     stickyOption1Btn.addEventListener("click", disableExitProtectionOnAction);
     stickyOption2Btn.addEventListener("click", disableExitProtectionOnAction);
-    /* =========================
-       FIM: SAÍDA
-    ========================= */
 
-    /* =========================
-       INÍCIO: INIT
-    ========================= */
     function init() {
-      generateInitialPoints();
+      generateInitialCandles();
       resizeCanvas();
       updateClockText();
-      drawChart();
+      drawCandles();
 
-      setInterval(advanceChart, 1800);
+      setInterval(advanceCandles, 1700);
       setInterval(updateClockText, 1000);
       setInterval(createToast, 7000);
     }
 
     window.addEventListener("resize", resizeCanvas);
     init();
-    /* =========================
-       FIM: INIT
-    ========================= */
   </script>
 </body>
 </html>
