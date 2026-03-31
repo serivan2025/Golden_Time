@@ -1,9 +1,30 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+
+    fbq('init', '795169496756642');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=795169496756642&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Meta Pixel Code -->
+
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>Momento de Ouro</title>
+
   <style>
     * {
       margin: 0;
@@ -265,8 +286,6 @@
       gap: 8px;
       transition: 0.25s ease;
     }
-
-    .urgency-strip low {}
 
     .urgency-strip.low {
       background: linear-gradient(135deg, rgba(38,208,124,0.12), rgba(244,201,93,0.05));
@@ -894,9 +913,8 @@
       </div>
 
       <p>
-        Esta é a opção geralmente mais estaveis mas para novas contas. <br>
-        Opção 2 requer contas novas.
-        
+        Esta é a opção geralmente mais estável para novas contas. <br>
+        Opção 2 também está disponível.
       </p>
 
       <div class="compat-note">
@@ -909,7 +927,7 @@
       <p>Escolhe uma das duas casas compatíveis com o sistema.</p>
 
       <div class="cta-highlight">
-        Quando o risco estiver favorável divirta-se mais , divirta-se com consciencia.
+        Quando o risco estiver favorável, diverte-se mais e com consciência.
       </div>
 
       <div class="cta-buttons">
@@ -947,9 +965,18 @@
   </div>
 
   <script>
+    // =========================
+    // INÍCIO: LINKS PRINCIPAIS
+    // =========================
     const OPTION_1_LINK = "https://sshortly.net/2304f61";
     const OPTION_2_LINK = "https://tracking.olabet.co.mz/C.ashx?btag=a_4465b_24c_&affid=4313&siteid=4465&adid=24&c=";
+    // ======================
+    // FIM: LINKS PRINCIPAIS
+    // ======================
 
+    // ============================
+    // INÍCIO: REFERÊNCIAS DO DOM
+    // ============================
     const riskCanvas = document.getElementById("riskCanvas");
     const ctx = riskCanvas.getContext("2d");
 
@@ -974,6 +1001,9 @@
     const exitModal = document.getElementById("exitModal");
     const stayBtn = document.getElementById("stayBtn");
     const closeExitModalBtn = document.getElementById("closeExitModalBtn");
+    // =========================
+    // FIM: REFERÊNCIAS DO DOM
+    // =========================
 
     option1Btn.href = OPTION_1_LINK;
     option2Btn.href = OPTION_2_LINK;
@@ -983,13 +1013,50 @@
     let candles = [];
     let currentPrice = 34;
     let currentRisk = 27;
+    let exitModalShown = false;
+    let allowExitModal = true;
 
+    // ===========================
+    // INÍCIO: META PIXEL HELPERS
+    // ===========================
+    function trackMetaEvent(eventName, params = {}) {
+      try {
+        if (typeof fbq === "function") {
+          fbq("track", eventName, params);
+        }
+      } catch (error) {
+        console.warn("Erro ao enviar evento do Pixel:", error);
+      }
+    }
+
+    function trackLeadClick(buttonName, destinationUrl) {
+      trackMetaEvent("Lead", {
+        content_name: buttonName,
+        content_category: "Momento de Ouro",
+        destination: destinationUrl
+      });
+    }
+    // ========================
+    // FIM: META PIXEL HELPERS
+    // ========================
+
+    // ========================
+    // INÍCIO: FUNÇÕES ÚTEIS
+    // ========================
     function randomBetween(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     function clamp(value, min, max) {
       return Math.max(min, Math.min(max, value));
+    }
+
+    function formatClockText() {
+      const now = new Date();
+      const h = String(now.getHours()).padStart(2, "0");
+      const m = String(now.getMinutes()).padStart(2, "0");
+      const s = String(now.getSeconds()).padStart(2, "0");
+      return `Actualizado às ${h}:${m}:${s}`;
     }
 
     function getRiskZone(value) {
@@ -1015,7 +1082,13 @@
       if (value <= 65) return "Velas em zona moderada de análise...";
       return "Velas em zona de maior atenção...";
     }
+    // =====================
+    // FIM: FUNÇÕES ÚTEIS
+    // =====================
 
+    // ==================================
+    // INÍCIO: ATUALIZAÇÃO VISUAL DO RISCO
+    // ==================================
     function updateUrgencyStrip(value) {
       let title = "";
       let text = "";
@@ -1056,8 +1129,7 @@
     }
 
     function triggerCTAHighlight(value) {
-      const isFavorable = value <= 35;
-      if (!isFavorable) return;
+      if (value > 35) return;
 
       option1Btn.classList.remove("shake");
       stickyOption1Btn.classList.remove("shake");
@@ -1069,174 +1141,203 @@
       stickyOption1Btn.classList.add("shake");
     }
 
-    function formatClockText() {
-      const now = new Date();
-      const h = String(now.getHours()).padStart(2, "0");
-      const m = String(now.getMinutes()).padStart(2, "0");
-      const s = String(now.getSeconds()).padStart(2, "0");
-      return `Actualizado ${h}:${m}:${s}`;
+    function updateRiskUI(value) {
+      const zone = getRiskZone(value);
+
+      riskPercentEl.textContent = `${value}%`;
+      riskBadgeEl.textContent = getRiskLabel(value);
+      riskSubEl.textContent = getRiskSubText(value);
+      microStatusEl.textContent = getMicroStatus(value);
+
+      riskBadgeEl.className = `risk-badge ${zone}`;
+      updateUrgencyStrip(value);
+      updatePulseColor(value);
+      triggerCTAHighlight(value);
     }
+    // ===============================
+    // FIM: ATUALIZAÇÃO VISUAL DO RISCO
+    // ===============================
 
-    function makeCandle(prevClose) {
-      const open = prevClose;
-      let close = open + randomBetween(-12, 12);
+    // ===========================
+    // INÍCIO: CANVAS E GRÁFICO
+    // ===========================
+    function resizeCanvas() {
+      const rect = riskCanvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
 
-      if (Math.random() < 0.22) {
-        close += randomBetween(-10, 10);
-      }
+      riskCanvas.width = rect.width * dpr;
+      riskCanvas.height = rect.height * dpr;
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.scale(dpr, dpr);
 
-      close = clamp(close, 8, 92);
-
-      const high = clamp(Math.max(open, close) + randomBetween(2, 8), 8, 96);
-      const low = clamp(Math.min(open, close) - randomBetween(2, 8), 4, 94);
-
-      return { open, high, low, close };
+      drawCandles();
     }
 
     function generateInitialCandles() {
       candles = [];
-      let price = 34;
+      currentPrice = 34;
 
-      for (let i = 0; i < 26; i++) {
-        const candle = makeCandle(price);
-        candles.push(candle);
-        price = candle.close;
+      for (let i = 0; i < 28; i++) {
+        const volatility = randomBetween(-6, 6);
+        const open = currentPrice;
+        const close = clamp(open + volatility, 8, 92);
+
+        const high = clamp(Math.max(open, close) + randomBetween(2, 8), 8, 100);
+        const low = clamp(Math.min(open, close) - randomBetween(2, 8), 0, 100);
+
+        candles.push({ open, close, high, low });
+        currentPrice = close;
       }
 
-      currentPrice = price;
-      currentRisk = Math.round(price);
-      updateRiskUI(currentRisk);
+      currentRisk = clamp(candles[candles.length - 1].close, 8, 92);
+      updateRiskUI(Math.round(currentRisk));
     }
 
-    function resizeCanvas() {
-      const rect = riskCanvas.getBoundingClientRect();
-      riskCanvas.width = rect.width * window.devicePixelRatio;
-      riskCanvas.height = rect.height * window.devicePixelRatio;
-      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    function advanceCandles() {
+      const last = candles[candles.length - 1];
+      const drift = randomBetween(-12, 12);
+      const open = last.close;
+      const close = clamp(open + drift, 8, 92);
+      const high = clamp(Math.max(open, close) + randomBetween(2, 8), 8, 100);
+      const low = clamp(Math.min(open, close) - randomBetween(2, 8), 0, 100);
+
+      candles.push({ open, close, high, low });
+
+      if (candles.length > 28) {
+        candles.shift();
+      }
+
+      currentRisk = Math.round(close);
+      updateRiskUI(currentRisk);
       drawCandles();
     }
 
-    function drawRiskBands(width, height) {
-      const redTop = 0;
-      const yellowTop = height * 0.35;
-      const greenTop = height * 0.65;
-
-      ctx.fillStyle = "rgba(255, 92, 92, 0.04)";
-      ctx.fillRect(0, redTop, width, yellowTop);
-
-      ctx.fillStyle = "rgba(255, 191, 71, 0.04)";
-      ctx.fillRect(0, yellowTop, width, greenTop - yellowTop);
-
-      ctx.fillStyle = "rgba(38, 208, 124, 0.04)";
-      ctx.fillRect(0, greenTop, width, height - greenTop);
-    }
-
-    function valueToY(value, height) {
-      return height - (value / 100) * (height - 20) - 10;
-    }
-
     function drawCandles() {
+      if (!riskCanvas) return;
+
       const width = riskCanvas.clientWidth;
       const height = riskCanvas.clientHeight;
 
       ctx.clearRect(0, 0, width, height);
+
       if (!candles.length) return;
 
-      drawRiskBands(width, height);
+      const padding = 16;
+      const chartW = width - padding * 2;
+      const chartH = height - padding * 2;
+      const candleWidth = Math.max(6, chartW / candles.length - 4);
 
-      const count = candles.length;
-      const slot = width / count;
-      const candleWidth = Math.max(6, slot * 0.45);
+      const zone = getRiskZone(currentRisk);
+      let color = "#26d07c";
+      if (zone === "yellow") color = "#ffbf47";
+      if (zone === "red") color = "#ff5c5c";
+
+      function toY(value) {
+        return padding + (100 - value) / 100 * chartH;
+      }
+
+      // linha suave de fundo
+      ctx.beginPath();
+      ctx.lineWidth = 2.5;
+      ctx.strokeStyle = color;
+      ctx.shadowBlur = 18;
+      ctx.shadowColor = color;
 
       candles.forEach((candle, index) => {
-        const x = index * slot + slot / 2;
-        const yOpen = valueToY(candle.open, height);
-        const yClose = valueToY(candle.close, height);
-        const yHigh = valueToY(candle.high, height);
-        const yLow = valueToY(candle.low, height);
+        const x = padding + index * (chartW / candles.length) + candleWidth / 2;
+        const y = toY(candle.close);
+
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+
+      // área em baixo da linha
+      ctx.save();
+      ctx.beginPath();
+      candles.forEach((candle, index) => {
+        const x = padding + index * (chartW / candles.length) + candleWidth / 2;
+        const y = toY(candle.close);
+
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+
+      const lastX = padding + (candles.length - 1) * (chartW / candles.length) + candleWidth / 2;
+      const firstX = padding + candleWidth / 2;
+
+      ctx.lineTo(lastX, height - padding);
+      ctx.lineTo(firstX, height - padding);
+      ctx.closePath();
+
+      const gradient = ctx.createLinearGradient(0, padding, 0, height - padding);
+      if (zone === "green") {
+        gradient.addColorStop(0, "rgba(38,208,124,0.28)");
+        gradient.addColorStop(1, "rgba(38,208,124,0.02)");
+      } else if (zone === "yellow") {
+        gradient.addColorStop(0, "rgba(255,191,71,0.28)");
+        gradient.addColorStop(1, "rgba(255,191,71,0.02)");
+      } else {
+        gradient.addColorStop(0, "rgba(255,92,92,0.28)");
+        gradient.addColorStop(1, "rgba(255,92,92,0.02)");
+      }
+
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      ctx.restore();
+
+      // velas
+      candles.forEach((candle, index) => {
+        const x = padding + index * (chartW / candles.length) + 2;
+        const wickX = x + candleWidth / 2;
+        const yOpen = toY(candle.open);
+        const yClose = toY(candle.close);
+        const yHigh = toY(candle.high);
+        const yLow = toY(candle.low);
 
         const isUp = candle.close <= candle.open;
-        const color = isUp ? "#26d07c" : "#ff5c5c";
+        const candleColor = isUp ? "rgba(38,208,124,0.9)" : "rgba(255,92,92,0.9)";
 
         ctx.beginPath();
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
-        ctx.moveTo(x, yHigh);
-        ctx.lineTo(x, yLow);
+        ctx.strokeStyle = candleColor;
+        ctx.lineWidth = 1.4;
+        ctx.moveTo(wickX, yHigh);
+        ctx.lineTo(wickX, yLow);
         ctx.stroke();
 
         const bodyTop = Math.min(yOpen, yClose);
         const bodyHeight = Math.max(4, Math.abs(yClose - yOpen));
 
-        ctx.fillStyle = color;
-        ctx.globalAlpha = 0.92;
-        ctx.fillRect(x - candleWidth / 2, bodyTop, candleWidth, bodyHeight);
-        ctx.globalAlpha = 1;
+        ctx.fillStyle = candleColor;
+        ctx.fillRect(x, bodyTop, candleWidth, bodyHeight);
       });
-
-      const last = candles[candles.length - 1];
-      const lastX = (count - 1) * slot + slot / 2;
-      const lastY = valueToY(last.close, height);
-
-      ctx.beginPath();
-      ctx.arc(lastX, lastY, 4.5, 0, Math.PI * 2);
-      ctx.fillStyle = currentRisk <= 35 ? "#26d07c" : currentRisk <= 65 ? "#ffbf47" : "#ff5c5c";
-      ctx.shadowColor = ctx.fillStyle;
-      ctx.shadowBlur = 16;
-      ctx.fill();
-      ctx.shadowBlur = 0;
     }
+    // ========================
+    // FIM: CANVAS E GRÁFICO
+    // ========================
 
-    function updateRiskUI(value) {
-      currentRisk = value;
-
-      const zone = getRiskZone(value);
-      const riskLabel = getRiskLabel(value);
-      const riskSub = getRiskSubText(value);
-      const microStatus = getMicroStatus(value);
-
-      riskPercentEl.textContent = `${value}%`;
-      riskSubEl.textContent = riskSub;
-      microStatusEl.textContent = microStatus;
-
-      riskBadgeEl.textContent = riskLabel;
-      riskBadgeEl.className = `risk-badge ${zone}`;
-
-      updateUrgencyStrip(value);
-      updatePulseColor(value);
-      triggerCTAHighlight(value);
-    }
-
-    function advanceCandles() {
-      const next = makeCandle(currentPrice);
-      candles.push(next);
-
-      if (candles.length > 26) {
-        candles.shift();
-      }
-
-      currentPrice = next.close;
-      updateRiskUI(Math.round(next.close));
-      drawCandles();
-    }
-
-    const toastMessages = [
-      { title: "Velas actualizadas", text: "O sistema ajustou a leitura do painel." },
-      { title: "Risco recalculado", text: "A faixa superior foi sincronizada com o gráfico." },
-      { title: "Fluxo activo", text: "Escolhe uma das opções compatíveis para continuar." },
-      { title: "Painel em observação", text: "A análise continua activa em tempo real." }
-    ];
-
+    // ======================
+    // INÍCIO: TOASTS
+    // ======================
     function createToast() {
-      const msg = toastMessages[randomBetween(0, toastMessages.length - 1)];
+      const messages = [
+        { title: "Novo sinal visual", text: "O sistema actualizou a leitura do painel." },
+        { title: "Painel activo", text: "As velas continuam a ser acompanhadas em tempo real." },
+        { title: "Leitura revista", text: "O estado actual foi recalculado automaticamente." },
+        { title: "Actualização concluída", text: "Os dados do painel foram renovados agora mesmo." }
+      ];
+
+      const randomMessage = messages[randomBetween(0, messages.length - 1)];
 
       const toast = document.createElement("div");
       toast.className = "toast";
       toast.innerHTML = `
         <div class="toast-icon">⚡</div>
         <div class="toast-body">
-          <strong>${msg.title}</strong>
-          <p>${msg.text}</p>
+          <strong>${randomMessage.title}</strong>
+          <p>${randomMessage.text}</p>
         </div>
       `;
 
@@ -1252,13 +1353,16 @@
         toast.remove();
       }, 4100);
     }
+    // ===================
+    // FIM: TOASTS
+    // ===================
 
+    // ============================
+    // INÍCIO: RELÓGIO E MODAL SAÍDA
+    // ============================
     function updateClockText() {
       clockTextEl.textContent = formatClockText();
     }
-
-    let exitModalShown = false;
-    let allowExitModal = true;
 
     function showExitModal() {
       if (exitModalShown || !allowExitModal) return;
@@ -1305,12 +1409,39 @@
     function disableExitProtectionOnAction() {
       allowExitModal = false;
     }
+    // =================================
+    // FIM: RELÓGIO E MODAL SAÍDA
+    // =================================
 
-    option1Btn.addEventListener("click", disableExitProtectionOnAction);
-    option2Btn.addEventListener("click", disableExitProtectionOnAction);
-    stickyOption1Btn.addEventListener("click", disableExitProtectionOnAction);
-    stickyOption2Btn.addEventListener("click", disableExitProtectionOnAction);
+    // =====================================
+    // INÍCIO: EVENTOS DOS BOTÕES + PIXEL
+    // =====================================
+    option1Btn.addEventListener("click", function () {
+      disableExitProtectionOnAction();
+      trackLeadClick("option1Btn", OPTION_1_LINK);
+    });
 
+    option2Btn.addEventListener("click", function () {
+      disableExitProtectionOnAction();
+      trackLeadClick("option2Btn", OPTION_2_LINK);
+    });
+
+    stickyOption1Btn.addEventListener("click", function () {
+      disableExitProtectionOnAction();
+      trackLeadClick("stickyOption1Btn", OPTION_1_LINK);
+    });
+
+    stickyOption2Btn.addEventListener("click", function () {
+      disableExitProtectionOnAction();
+      trackLeadClick("stickyOption2Btn", OPTION_2_LINK);
+    });
+    // ==================================
+    // FIM: EVENTOS DOS BOTÕES + PIXEL
+    // ==================================
+
+    // ======================
+    // INÍCIO: INIT
+    // ======================
     function init() {
       generateInitialCandles();
       resizeCanvas();
@@ -1324,6 +1455,9 @@
 
     window.addEventListener("resize", resizeCanvas);
     init();
+    // ===================
+    // FIM: INIT
+    // ===================
   </script>
 </body>
 </html>
