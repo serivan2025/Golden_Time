@@ -803,6 +803,31 @@
       margin-top: 16px;
     }
 
+
+
+    .demo-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(255, 191, 71, 0.12);
+      border: 1px solid rgba(255, 191, 71, 0.22);
+      color: #ffe0a3;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .toast.demo-toast {
+      border: 1px solid rgba(255, 191, 71, 0.26);
+    }
+
+    .toast.demo-toast .toast-icon {
+      background: rgba(255, 191, 71, 0.12);
+      color: #ffe0a3;
+    }
+
     @media (min-width: 768px) {
       .app {
         max-width: 520px;
@@ -839,7 +864,7 @@
           <p>Predictor Gratis - Analise de Aviator </p>
         </div>
       </div>
-      <div class="status-live">● Sistema activo</div>
+      <div class="status-live" id="onlineStatus">● 37 online · </div>
     </header>
 
     <section class="urgency-strip low" id="urgencyStrip">
@@ -857,6 +882,8 @@
         O sistema funciona com as opções recomendadas abaixo.
         Cria conta em uma delas para continuar.
       </p>
+
+      <div class="demo-badge"> Analise / Aviator</div>
 
       <div class="hero-info">
         <div class="info-box">
@@ -999,6 +1026,7 @@
 
     const toastWrap = document.getElementById("toastWrap");
     const exitModal = document.getElementById("exitModal");
+    const onlineStatusEl = document.getElementById("onlineStatus");
     const stayBtn = document.getElementById("stayBtn");
     const closeExitModalBtn = document.getElementById("closeExitModalBtn");
     // =========================
@@ -1015,6 +1043,48 @@
     let currentRisk = 27;
     let exitModalShown = false;
     let allowExitModal = true;
+
+    // ================================
+    // INÍCIO: SIMULAÇÃO VISUAL DEMO
+    // ================================
+    const DEMO_MODE = true;
+
+    const mozNames = [
+      "António Nhatumbo","Nelson Cossa","Felisberto Machava","Tomás Bila","Hermínio Mabunda",
+      "Sérgio Matola","Alfredo Chivale","Alberto Zitha","Januário Baloi","Carlos Sitoe",
+      "Eusébio Mucavele","Paulo Tembe","Afonso Guambe","Emílio Nhantumbo","Domingos Mavota",
+      "Salvador Chissano","Arlindo Mbanze","Rui Cumbane","Valter Mucanga","Hilário Massinga",
+      "João Mucavel","Rafael Mabote","Ismael Ussene","Rogério Chaúque","Anselmo Maunze",
+      "Aldino Matusse","Justino Mussanhane","Pedro Cumbana","Tito Mondlane","Virgílio Sumbane",
+      "Mateus Langa","Ernesto Simango","Albino Moiane","Joaquim Mahumane","Elísio Mavie",
+      "Bento Balate","Nélio Motaze","Moisés Mucasse","Roberto Chivambo","Elias Manganhela",
+      "Vasco Maphissa","Adriano Maluleque","Joel Mavimbe","Efraim Momade","Belmiro Cuamba",
+      "Raimundo Mahate","Mário Muianga","Zacarias Mucave","Samuel Jone","Arão Cossa",
+      "Amélia Sitoe","Celina Mabunda","Marta Machava","Anabela Cossa","Jéssica Baloi",
+      "Ivone Tembe","Helena Bila","Marlene Guambe","Elsa Zitha","Noémia Mbanze",
+      "Rita Chivale","Julieta Massinga","Sónia Cumbane","Carla Mucavele","Dalila Mavota",
+      "Neusa Matola","Alcina Nhantumbo","Dina Mahumane","Lurdes Mucanga","Tânia Balate",
+      "Mónica Simango","Eunice Maunze","Yara Mabote","Glória Moiane","Zena Mussanhane",
+      "Elisa Sumbane","Marisa Langa","Ofélia Chaúque","Madalena Matusse","Nádia Mavimbe",
+      "Rosa Mucasse","Cremilda Cuamba","Margarida Momade","Natália Maphissa","Aida Manganhela",
+      "Leonor Muianga","Palmira Jone","Inácia Mahate","Sandra Mondlane","Fátima Maluleque",
+      "Belita Nhatumbo","Teresinha Tembe","Aurora Cossa","Alina Sitoe","Brígida Mabunda",
+      "Adelina Machava","Olívia Bila","Emília Guambe","Josefina Baloi","Lídia Massinga",
+      "Abel Tembe","Celso Matola","Inocêncio Bila","Mariano Mabunda","Osvaldo Cossa",
+      "Teodoro Mucavele","Gilberto Baloi","Leopoldo Sitoe","Avelino Chivale","Jacinto Guambe",
+      "Marcelo Mavota","Edson Mbanze","Nilton Maunze","Armando Mussanhane","Alcides Cumbane",
+      "Fabrício Mahate","Cláudio Mucasse","Genito Maphissa","Hermenegildo Momade","Octávio Moiane",
+      "Sandro Jone","Décio Mucanga","Flávio Manganhela","Lázaro Mondlane","Norberto Maluleque",
+      "Belchior Muianga","Casimiro Simango","Délcio Zitha","Estevão Mabote","Gaspar Matusse",
+      "Horácio Sumbane","Jorge Massinga","Lourenço Chaúque","Manuel Mavimbe","Nuno Balate",
+      "Orlando Mahumane","Pascoal Cuamba","Quitério Cossa","Ricardo Tembe","Sebastião Bila"
+    ];
+
+    let demoNameIndex = 0;
+    let demoNamePool = [];
+    // ==============================
+    // FIM: SIMULAÇÃO VISUAL DEMO
+    // ==============================
 
     // ===========================
     // INÍCIO: META PIXEL HELPERS
@@ -1057,6 +1127,37 @@
       const m = String(now.getMinutes()).padStart(2, "0");
       const s = String(now.getSeconds()).padStart(2, "0");
       return `Actualizado às ${h}:${m}:${s}`;
+    }
+
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function formatMoneyMT(value) {
+      return `${value.toLocaleString("pt-PT")} MT`;
+    }
+
+    function getNextDemoName() {
+      if (demoNamePool.length === 0 || demoNameIndex >= demoNamePool.length) {
+        demoNamePool = shuffleArray([...mozNames]);
+        demoNameIndex = 0;
+      }
+
+      const name = demoNamePool[demoNameIndex];
+      demoNameIndex += 1;
+      return name;
+    }
+
+    function getDemoAmount() {
+      return randomBetween(345, 22600);
+    }
+
+    function getDemoOnlineCount() {
+      return randomBetween(3, 148);
     }
 
     function getRiskZone(value) {
@@ -1319,33 +1420,33 @@
     // ========================
 
     // ======================
-    // INÍCIO: TOASTS
+    // INÍCIO: TOASTS DEMO
     // ======================
     function createToast() {
-      const messages = [
-        { title: "Novo sinal visual", text: "O sistema actualizou a leitura do painel." },
-        { title: "Painel activo", text: "As velas continuam a ser acompanhadas em tempo real." },
-        { title: "Leitura revista", text: "O estado actual foi recalculado automaticamente." },
-        { title: "Actualização concluída", text: "Os dados do painel foram renovados agora mesmo." }
-      ];
+      if (!DEMO_MODE) return;
 
-      const randomMessage = messages[randomBetween(0, messages.length - 1)];
+      const personName = getNextDemoName();
+      const amount = getDemoAmount();
 
       const toast = document.createElement("div");
-      toast.className = "toast";
+      toast.className = "toast demo-toast";
       toast.innerHTML = `
-        <div class="toast-icon">⚡</div>
+        <div class="toast-icon">📢</div>
         <div class="toast-body">
-          <strong>${randomMessage.title}</strong>
-          <p>${randomMessage.text}</p>
+          <strong>Resultados</strong>
+          <p>${personName} Faturou ${formatMoneyMT(amount)}.</p>
         </div>
       `;
 
-      toastWrap.appendChild(toast);
+      toastWrap.prepend(toast);
+
+      while (toastWrap.children.length > 2) {
+        toastWrap.removeChild(toastWrap.lastChild);
+      }
 
       setTimeout(() => {
         toast.style.opacity = "0";
-        toast.style.transform = "translateY(8px)";
+        toast.style.transform = "translateY(10px)";
         toast.style.transition = "0.3s ease";
       }, 3600);
 
@@ -1353,8 +1454,15 @@
         toast.remove();
       }, 4100);
     }
+
+    function updateOnlineDemo() {
+      if (!DEMO_MODE || !onlineStatusEl) return;
+
+      const total = getDemoOnlineCount();
+      onlineStatusEl.textContent = `● ${total} online · `;
+    }
     // ===================
-    // FIM: TOASTS
+    // FIM: TOASTS DEMO
     // ===================
 
     // ============================
@@ -1446,11 +1554,13 @@
       generateInitialCandles();
       resizeCanvas();
       updateClockText();
+      updateOnlineDemo();
       drawCandles();
 
       setInterval(advanceCandles, 1700);
       setInterval(updateClockText, 1000);
       setInterval(createToast, 7000);
+      setInterval(updateOnlineDemo, 5000);
     }
 
     window.addEventListener("resize", resizeCanvas);
