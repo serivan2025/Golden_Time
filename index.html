@@ -186,6 +186,33 @@
       flex-shrink: 0;
     }
 
+    .topbar-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .lang-switch {
+      min-width: 72px;
+      padding: 8px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.10);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .lang-switch:hover,
+    .lang-switch:active {
+      transform: translateY(-1px);
+      border-color: rgba(255,223,139,0.22);
+      background: rgba(255,223,139,0.08);
+    }
+
     @keyframes pulseLive {
       0%, 100% { box-shadow: 0 0 0 0 rgba(38, 208, 124, 0.10); }
       50% { box-shadow: 0 0 0 10px rgba(38, 208, 124, 0.01); }
@@ -861,10 +888,13 @@
         <div class="brand-badge">⚡</div>
         <div class="brand-text">
           <h1>Momento de Ouro</h1>
-          <p>Predictor Gratis - Analise de Aviator </p>
+          <p id="brandSubtitle">Predictor Gratis - Analise de Aviator </p>
         </div>
       </div>
-      <div class="status-live" id="onlineStatus">● 37 online · </div>
+      <div class="topbar-actions">
+        <div class="status-live" id="onlineStatus">● 37 online · </div>
+        <button type="button" class="lang-switch" id="langToggleBtn">PT | EN</button>
+      </div>
     </header>
 
     <section class="urgency-strip low" id="urgencyStrip">
@@ -876,39 +906,39 @@
     </section>
 
     <section class="card hero">
-      <div class="mini-label">⚡ 2 opções compatíveis</div>
-      <h2>Analisando Velas e o Risco das Casas</h2>
-      <p>
+      <div class="mini-label" id="miniCompatibleLabel">⚡ 2 opções compatíveis</div>
+      <h2 id="heroTitle">Analisando Velas e o Risco das Casas</h2>
+      <p id="heroText">
         O sistema funciona com as opções recomendadas abaixo.
         Cria conta em uma delas para continuar.
       </p>
 
-      <div class="demo-badge"> Analise / Aviator</div>
+      <div class="demo-badge" id="demoBadgeLabel"> Analise / Aviator</div>
 
       <div class="hero-info">
         <div class="info-box">
-          <strong>Live</strong>
-          <span>leitura actualizada</span>
+          <strong id="infoLiveLabel">Live</strong>
+          <span id="infoLiveSub">leitura actualizada</span>
         </div>
         <div class="info-box">
           <strong>2</strong>
-          <span>casas compatíveis</span>
+          <span id="infoHousesSub">casas compatíveis</span>
         </div>
         <div class="info-box">
           <strong>Fast</strong>
-          <span>uso rápido</span>
+          <span id="infoFastSub">uso rápido</span>
         </div>
       </div>
     </section>
 
     <section class="card">
       <div class="section-title">
-        <h3>Painel de risco</h3>
+        <h3 id="panelTitle">Painel de risco</h3>
         <span id="clockText">Actualizado agora</span>
       </div>
 
       <div class="risk-head">
-        <div class="risk-name">Estado actual</div>
+        <div class="risk-name" id="currentStateLabel">Estado actual</div>
         <div id="riskBadge" class="risk-badge green">Baixo risco</div>
       </div>
 
@@ -933,27 +963,27 @@
     <section class="card highlight-card">
       <div class="highlight-top">
         <div>
-          <div class="mini-label" style="margin-bottom:8px;">🔥 Opção principal</div>
-          <div class="house-name">Opção 1</div>
+          <div class="mini-label" style="margin-bottom:8px;" id="highlightMiniLabel">🔥 Opção principal</div>
+          <div class="house-name" id="houseNameLabel">Opção 1</div>
         </div>
-        <div class="highlight-badge">Mais destacada</div>
+        <div class="highlight-badge" id="highlightBadgeLabel">Mais destacada</div>
       </div>
 
-      <p>
+      <p id="highlightText">
         Esta é a opção geralmente mais estável para novas contas. <br>
         Opção 2 também está disponível.
       </p>
 
-      <div class="compat-note">
+      <div class="compat-note" id="compatNote">
         Para continuar com o Momento de Ouro, usa uma das duas opções compatíveis abaixo.
       </div>
     </section>
 
     <section class="card cta-card" id="ctaSection">
-      <h3>Cria conta e continua agora</h3>
-      <p>Escolhe uma das duas casas compatíveis com o sistema.</p>
+      <h3 id="ctaTitle">Cria conta e continua agora</h3>
+      <p id="ctaText">Escolhe uma das duas casas compatíveis com o sistema.</p>
 
-      <div class="cta-highlight">
+      <div class="cta-highlight" id="ctaHighlight">
         Quando o risco estiver favorável, diverte-se mais e com consciência.
       </div>
 
@@ -962,7 +992,7 @@
         <a href="#" class="btn btn-secondary" id="option2Btn">🔒 Criar conta na Opção 2</a>
       </div>
 
-      <div class="cta-note">
+      <div class="cta-note" id="ctaNote">
         Escolhe uma opção e continua.
       </div>
     </section>
@@ -979,8 +1009,8 @@
 
   <div class="exit-modal" id="exitModal">
     <div class="exit-box">
-      <h4>Queres sair agora?</h4>
-      <p>
+      <h4 id="exitTitle">Queres sair agora?</h4>
+      <p id="exitText">
         Podes perder a oportunidade de continuar a usar o sistema com uma das opções compatíveis.
       </p>
 
@@ -1029,9 +1059,215 @@
     const onlineStatusEl = document.getElementById("onlineStatus");
     const stayBtn = document.getElementById("stayBtn");
     const closeExitModalBtn = document.getElementById("closeExitModalBtn");
+    const langToggleBtn = document.getElementById("langToggleBtn");
+    const brandSubtitleEl = document.getElementById("brandSubtitle");
+    const miniCompatibleLabelEl = document.getElementById("miniCompatibleLabel");
+    const heroTitleEl = document.getElementById("heroTitle");
+    const heroTextEl = document.getElementById("heroText");
+    const demoBadgeLabelEl = document.getElementById("demoBadgeLabel");
+    const infoLiveLabelEl = document.getElementById("infoLiveLabel");
+    const infoLiveSubEl = document.getElementById("infoLiveSub");
+    const infoHousesSubEl = document.getElementById("infoHousesSub");
+    const infoFastSubEl = document.getElementById("infoFastSub");
+    const panelTitleEl = document.getElementById("panelTitle");
+    const currentStateLabelEl = document.getElementById("currentStateLabel");
+    const highlightMiniLabelEl = document.getElementById("highlightMiniLabel");
+    const houseNameLabelEl = document.getElementById("houseNameLabel");
+    const highlightBadgeLabelEl = document.getElementById("highlightBadgeLabel");
+    const highlightTextEl = document.getElementById("highlightText");
+    const compatNoteEl = document.getElementById("compatNote");
+    const ctaTitleEl = document.getElementById("ctaTitle");
+    const ctaTextEl = document.getElementById("ctaText");
+    const ctaHighlightEl = document.getElementById("ctaHighlight");
+    const ctaNoteEl = document.getElementById("ctaNote");
+    const exitTitleEl = document.getElementById("exitTitle");
+    const exitTextEl = document.getElementById("exitText");
     // =========================
     // FIM: REFERÊNCIAS DO DOM
     // =========================
+
+    const translations = {
+      pt: {
+        htmlLang: "pt",
+        brandSubtitle: "Predictor Gratis - Analise de Aviator",
+        miniCompatibleLabel: "⚡ 2 opções compatíveis",
+        heroTitle: "Analisando Velas e o Risco das Casas",
+        heroText: "O sistema funciona com as opções recomendadas abaixo. Cria conta em uma delas para continuar.",
+        demoBadgeLabel: "Analise / Aviator",
+        infoLiveLabel: "Live",
+        infoLiveSub: "leitura actualizada",
+        infoHousesSub: "casas compatíveis",
+        infoFastSub: "uso rápido",
+        panelTitle: "Painel de risco",
+        currentStateLabel: "Estado actual",
+        updatedNow: "Actualizado agora",
+        updatedAtPrefix: "Actualizado às",
+        riskLow: "Baixo risco",
+        riskModerate: "Risco moderado",
+        riskHigh: "Alto risco",
+        riskSubLow: "Leitura favorável em observação",
+        riskSubModerate: "Oscilação intermédia detectada",
+        riskSubHigh: "Atenção reforçada na leitura actual",
+        microLow: "Velas a indicar momento mais favorável...",
+        microModerate: "Velas em zona moderada de análise...",
+        microHigh: "Velas em zona de maior atenção...",
+        urgencyLowTitle: "🟢 Risco Baixo Detectado",
+        urgencyLowText: "Momento mais favorável no painel. Escolhe uma das opções abaixo para continuar.",
+        urgencyModerateTitle: "⚠️ Risco Moderado Detectado",
+        urgencyModerateText: "Oscilação moderada em análise. Continua atento e escolhe uma das opções compatíveis.",
+        urgencyHighTitle: "🚨 Risco Alto Detectado",
+        urgencyHighText: "Zona de maior atenção no painel. Continua com cuidado e activa uma das opções para seguir.",
+        highlightMiniLabel: "🔥 Opção principal",
+        houseNameLabel: "Opção 1",
+        highlightBadgeLabel: "Mais destacada",
+        highlightText: "Esta é a opção geralmente mais estável para novas contas. <br>Opção 2 também está disponível.",
+        compatNote: "Para continuar com o Momento de Ouro, usa uma das duas opções compatíveis abaixo.",
+        ctaTitle: "Cria conta e continua agora",
+        ctaText: "Escolhe uma das duas casas compatíveis com o sistema.",
+        ctaHighlight: "Quando o risco estiver favorável, diverte-se mais e com consciência.",
+        option1Btn: "⚡ Criar conta na Opção 1",
+        option2Btn: "🔒 Criar conta na Opção 2",
+        ctaNote: "Escolhe uma opção e continua.",
+        stickyOption1Btn: "Activar Opção 1",
+        stickyOption2Btn: "Opção 2",
+        exitTitle: "Queres sair agora?",
+        exitText: "Podes perder a oportunidade de continuar a usar o sistema com uma das opções compatíveis.",
+        stayBtn: "Continuar agora",
+        closeExitModalBtn: "Fechar",
+        toastTitle: "Resultados",
+        toastMessage: (name, amount) => `${name} Faturou ${amount}.`,
+        onlineStatus: (total) => `● ${total} online · `,
+        langButton: "PT | EN"
+      },
+      en: {
+        htmlLang: "en",
+        brandSubtitle: "Free Predictor - Aviator Analysis",
+        miniCompatibleLabel: "⚡ 2 compatible options",
+        heroTitle: "Analyzing Candles and House Risk",
+        heroText: "The system works with the recommended options below. Create an account in one of them to continue.",
+        demoBadgeLabel: "Analysis / Aviator",
+        infoLiveLabel: "Live",
+        infoLiveSub: "updated reading",
+        infoHousesSub: "compatible houses",
+        infoFastSub: "fast use",
+        panelTitle: "Risk panel",
+        currentStateLabel: "Current state",
+        updatedNow: "Updated now",
+        updatedAtPrefix: "Updated at",
+        riskLow: "Low risk",
+        riskModerate: "Moderate risk",
+        riskHigh: "High risk",
+        riskSubLow: "Favorable reading under observation",
+        riskSubModerate: "Intermediate oscillation detected",
+        riskSubHigh: "Extra caution on the current reading",
+        microLow: "Candles indicate a more favorable moment...",
+        microModerate: "Candles in a moderate analysis zone...",
+        microHigh: "Candles in a higher attention zone...",
+        urgencyLowTitle: "🟢 Low Risk Detected",
+        urgencyLowText: "Most favorable moment on the panel. Choose one of the options below to continue.",
+        urgencyModerateTitle: "⚠️ Moderate Risk Detected",
+        urgencyModerateText: "Moderate oscillation under analysis. Stay alert and choose one of the compatible options.",
+        urgencyHighTitle: "🚨 High Risk Detected",
+        urgencyHighText: "Higher attention zone on the panel. Continue carefully and activate one of the options to proceed.",
+        highlightMiniLabel: "🔥 Main option",
+        houseNameLabel: "Option 1",
+        highlightBadgeLabel: "Most highlighted",
+        highlightText: "This is usually the most stable option for new accounts. <br>Option 2 is also available.",
+        compatNote: "To continue with Momento de Ouro, use one of the two compatible options below.",
+        ctaTitle: "Create an account and continue now",
+        ctaText: "Choose one of the two houses compatible with the system.",
+        ctaHighlight: "When the risk is favorable, enjoy more and stay responsible.",
+        option1Btn: "⚡ Create account on Option 1",
+        option2Btn: "🔒 Create account on Option 2",
+        ctaNote: "Choose one option and continue.",
+        stickyOption1Btn: "Activate Option 1",
+        stickyOption2Btn: "Option 2",
+        exitTitle: "Do you want to leave now?",
+        exitText: "You may lose the chance to keep using the system with one of the compatible options.",
+        stayBtn: "Continue now",
+        closeExitModalBtn: "Close",
+        toastTitle: "Results",
+        toastMessage: (name, amount) => `${name} earned ${amount}.`,
+        onlineStatus: (total) => `● ${total} online · `,
+        langButton: "EN | PT"
+      }
+    };
+
+    let currentLang = "pt";
+
+    function detectInitialLanguage() {
+      const savedLang = localStorage.getItem("momentoDeOuroLang");
+      if (savedLang && translations[savedLang]) return savedLang;
+
+      const browserLanguages = Array.isArray(navigator.languages) ? navigator.languages : [navigator.language || navigator.userLanguage || ""];
+      const hasPortuguese = browserLanguages.some(lang => String(lang).toLowerCase().startsWith("pt"));
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+      const portugueseTimezones = ["Africa/Maputo", "Africa/Luanda", "Europe/Lisbon"];
+
+      if (hasPortuguese || portugueseTimezones.includes(timezone)) {
+        return "pt";
+      }
+
+      return "en";
+    }
+
+    function t(key, ...args) {
+      const dict = translations[currentLang] || translations.pt;
+      const value = dict[key];
+
+      if (typeof value === "function") {
+        return value(...args);
+      }
+
+      return value ?? key;
+    }
+
+    function applyLanguage(lang) {
+      if (!translations[lang]) return;
+
+      currentLang = lang;
+      localStorage.setItem("momentoDeOuroLang", lang);
+      document.documentElement.lang = t("htmlLang");
+
+      brandSubtitleEl.textContent = t("brandSubtitle");
+      miniCompatibleLabelEl.textContent = t("miniCompatibleLabel");
+      heroTitleEl.textContent = t("heroTitle");
+      heroTextEl.textContent = t("heroText");
+      demoBadgeLabelEl.textContent = ` ${t("demoBadgeLabel")}`;
+      infoLiveLabelEl.textContent = t("infoLiveLabel");
+      infoLiveSubEl.textContent = t("infoLiveSub");
+      infoHousesSubEl.textContent = t("infoHousesSub");
+      infoFastSubEl.textContent = t("infoFastSub");
+      panelTitleEl.textContent = t("panelTitle");
+      currentStateLabelEl.textContent = t("currentStateLabel");
+      highlightMiniLabelEl.textContent = t("highlightMiniLabel");
+      houseNameLabelEl.textContent = t("houseNameLabel");
+      highlightBadgeLabelEl.textContent = t("highlightBadgeLabel");
+      highlightTextEl.innerHTML = t("highlightText");
+      compatNoteEl.textContent = t("compatNote");
+      ctaTitleEl.textContent = t("ctaTitle");
+      ctaTextEl.textContent = t("ctaText");
+      ctaHighlightEl.textContent = t("ctaHighlight");
+      option1Btn.textContent = t("option1Btn");
+      option2Btn.textContent = t("option2Btn");
+      ctaNoteEl.textContent = t("ctaNote");
+      stickyOption1Btn.textContent = t("stickyOption1Btn");
+      stickyOption2Btn.textContent = t("stickyOption2Btn");
+      exitTitleEl.textContent = t("exitTitle");
+      exitTextEl.textContent = t("exitText");
+      stayBtn.textContent = t("stayBtn");
+      closeExitModalBtn.textContent = t("closeExitModalBtn");
+      langToggleBtn.textContent = t("langButton");
+
+      updateClockText();
+      updateOnlineDemo();
+      updateRiskUI(Math.round(currentRisk));
+    }
+
+    function toggleLanguageManually() {
+      const nextLang = currentLang === "pt" ? "en" : "pt";
+      applyLanguage(nextLang);
+    }
 
     option1Btn.href = OPTION_1_LINK;
     option2Btn.href = OPTION_2_LINK;
@@ -1126,7 +1362,7 @@
       const h = String(now.getHours()).padStart(2, "0");
       const m = String(now.getMinutes()).padStart(2, "0");
       const s = String(now.getSeconds()).padStart(2, "0");
-      return `Actualizado às ${h}:${m}:${s}`;
+      return `${t("updatedAtPrefix")} ${h}:${m}:${s}`;
     }
 
     function shuffleArray(array) {
@@ -1167,21 +1403,21 @@
     }
 
     function getRiskLabel(value) {
-      if (value <= 35) return "Baixo risco";
-      if (value <= 65) return "Risco moderado";
-      return "Alto risco";
+      if (value <= 35) return t("riskLow");
+      if (value <= 65) return t("riskModerate");
+      return t("riskHigh");
     }
 
     function getRiskSubText(value) {
-      if (value <= 35) return "Leitura favorável em observação";
-      if (value <= 65) return "Oscilação intermédia detectada";
-      return "Atenção reforçada na leitura actual";
+      if (value <= 35) return t("riskSubLow");
+      if (value <= 65) return t("riskSubModerate");
+      return t("riskSubHigh");
     }
 
     function getMicroStatus(value) {
-      if (value <= 35) return "Velas a indicar momento mais favorável...";
-      if (value <= 65) return "Velas em zona moderada de análise...";
-      return "Velas em zona de maior atenção...";
+      if (value <= 35) return t("microLow");
+      if (value <= 65) return t("microModerate");
+      return t("microHigh");
     }
     // =====================
     // FIM: FUNÇÕES ÚTEIS
@@ -1197,18 +1433,18 @@
       let fillClass = "";
 
       if (value <= 35) {
-        title = "🟢 Risco Baixo Detectado";
-        text = "Momento mais favorável no painel. Escolhe uma das opções abaixo para continuar.";
+        title = t("urgencyLowTitle");
+        text = t("urgencyLowText");
         stripClass = "low";
         fillClass = "low";
       } else if (value <= 65) {
-        title = "⚠️ Risco Moderado Detectado";
-        text = "Oscilação moderada em análise. Continua atento e escolhe uma das opções compatíveis.";
+        title = t("urgencyModerateTitle");
+        text = t("urgencyModerateText");
         stripClass = "medium";
         fillClass = "medium";
       } else {
-        title = "🚨 Risco Alto Detectado";
-        text = "Zona de maior atenção no painel. Continua com cuidado e activa uma das opções para seguir.";
+        title = t("urgencyHighTitle");
+        text = t("urgencyHighText");
         stripClass = "high";
         fillClass = "high";
       }
@@ -1433,8 +1669,8 @@
       toast.innerHTML = `
         <div class="toast-icon">📢</div>
         <div class="toast-body">
-          <strong>Resultados</strong>
-          <p>${personName} Faturou ${formatMoneyMT(amount)}.</p>
+          <strong>${t("toastTitle")}</strong>
+          <p>${t("toastMessage", personName, formatMoneyMT(amount))}</p>
         </div>
       `;
 
@@ -1459,7 +1695,7 @@
       if (!DEMO_MODE || !onlineStatusEl) return;
 
       const total = getDemoOnlineCount();
-      onlineStatusEl.textContent = `● ${total} online · `;
+      onlineStatusEl.textContent = t("onlineStatus", total);
     }
     // ===================
     // FIM: TOASTS DEMO
@@ -1469,7 +1705,7 @@
     // INÍCIO: RELÓGIO E MODAL SAÍDA
     // ============================
     function updateClockText() {
-      clockTextEl.textContent = formatClockText();
+      clockTextEl.textContent = candles.length ? formatClockText() : t("updatedNow");
     }
 
     function showExitModal() {
@@ -1484,6 +1720,7 @@
     }
 
     closeExitModalBtn.addEventListener("click", hideExitModal);
+    langToggleBtn.addEventListener("click", toggleLanguageManually);
 
     stayBtn.addEventListener("click", function () {
       hideExitModal();
@@ -1551,6 +1788,7 @@
     // INÍCIO: INIT
     // ======================
     function init() {
+      applyLanguage(detectInitialLanguage());
       generateInitialCandles();
       resizeCanvas();
       updateClockText();
